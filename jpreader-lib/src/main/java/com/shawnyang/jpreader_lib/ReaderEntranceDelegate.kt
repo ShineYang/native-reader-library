@@ -50,7 +50,9 @@ import kotlin.coroutines.suspendCoroutine
  * description:
  */
 class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.ActivityLifecycleCallbacks, CoroutineScope {
-    private val CHANNEL_NAME = "native_plugin"
+    //    private val FLUTTER_CHANNEL_NAME = "update_tunnel"
+    //    private val CHANNEL_NAME = "native_plugin"
+
     private lateinit var R2DIRECTORY: String
     private var localPort: Int = 0
     private lateinit var database: BooksDatabase
@@ -59,8 +61,8 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
     private lateinit var readerLauncher: ActivityResultLauncher<ReaderContract.Input>
     private lateinit var documentPickerLauncher: ActivityResultLauncher<String>
 
-    private val FLUTTER_CHANNEL_NAME = "update_tunnel"
     private val UPDATE_DB_SUCCESS = "update_db_success"
+    private val SEND_ANALYZE_CONTENT = "send_analyze_content"
     private var eventJob: Job? = null
 
     override val coroutineContext: CoroutineContext
@@ -69,6 +71,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         initServer()
         eventJob = receiveEventHandler<AnalyzeEvent> {
+            embedListener?.onReceiveMessage(mapOf(SEND_ANALYZE_CONTENT to it.content))
             Timber.v(it.content)
         }
     }
@@ -114,7 +117,8 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
         }
     }
 
-    fun onCall(call: Map<String, String>, onResult: ((String) -> Unit)){
+    //method call 传入的消息
+    fun onCall(call: Map<String, String>, onResult: ((String) -> Unit)) {
         when (call["methodName"]) {
             MessageType.OpenBook.methodName -> {
                 //打开书籍
@@ -127,7 +131,8 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
             }
             MessageType.GetBookList.methodName -> {
                 //处理本地书籍列表的参数
-                val bookListJson: String = Gson().toJson(database.books.list())
+                val list = launch { database.books.list() }
+                val bookListJson: String = toJson(list)
                 onResult(bookListJson)
             }
 
@@ -156,6 +161,10 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                 onResult("")
             }
         }
+    }
+
+    private fun toJson(obj: Any): String {
+        return Gson().toJson(obj)
     }
 
     //打开path下的书籍
@@ -239,7 +248,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                     //发送更新成功消息
                     if (success) {
                         activity.toast("添加成功")
-                        //todo messageChannel?.send(UPDATE_DB_SUCCESS)
+                        embedListener?.onReceiveMessage(mapOf(UPDATE_DB_SUCCESS to ""))
                     }
                     if (success && isRwpm)
                         tryOrNull { libraryAsset.file.delete() }
@@ -366,5 +375,14 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
     override fun onActivityDestroyed(activity: Activity) {
         eventJob?.cancel()
         stopServer()
+    }
+
+    var embedListener: OnSendMessageToEmbedListener? = null
+        get() = field
+        set(value) { field = value}
+
+
+    interface OnSendMessageToEmbedListener {
+        fun onReceiveMessage(result: Map<String, String>)
     }
 }
