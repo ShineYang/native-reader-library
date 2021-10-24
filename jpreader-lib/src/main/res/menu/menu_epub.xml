@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Module: r2-testapp-kotlin
+  ~ Developers: Aferdita Muriqi, Clément Baumann, Mostapha Idoubihi, Paul Stoica
+  ~
+  ~ Copyright (c) 2018. European Digital Reading Lab. All rights reserved.
+  ~ Licensed to the Readium Foundation under one or more contributor license agreements.
+  ~ Use of this source code is governed by a BSD-style license which is detailed in the
+  ~ LICENSE file present in the project repository where this source code is maintained.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context='org.readium.r2.testapp.epub.EpubActivity'>
+
+    <item
+        android:id="@+id/menu_bookmark"
+        android:icon="@drawable/ic_bookmarks"
+        android:orderInCategory="20"
+        android:title="书签"
+        app:iconifiedByDefault="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_caps_small"
+        android:orderInCategory="30"
+        android:title="设置"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@+id/menu_navi"
+        android:icon="@drawable/ic_menu_to_arrow_right"
+        android:orderInCategory="80"
+        android:title="大纲"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
+
+</menu>

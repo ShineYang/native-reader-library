@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Module: r2-navigator-kotlin
+  ~ Developers: Aferdita Muriqi, Clément Baumann
+  ~
+  ~ Copyright (c) 2018. European Digital Reading Lab. All rights reserved.
+  ~ Licensed to the Readium Foundation under one or more contributor license agreements.
+  ~ Use of this source code is governed by a BSD-style license which is detailed in the
+  ~ LICENSE file present in the project repository where this source code is maintained.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="end"
+    android:orientation="horizontal"
+    android:background="@color/white"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/SettingsTab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/font_decrease"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@android:color/white"
+                        android:contentDescription="@string/usersettings_description_font_decrease"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/icon_font_decrease" />
+
+                    <View
+                        android:layout_width="1px"
+                        android:layout_height="match_parent"
+                        android:background="#888888" />
+
+                    <ImageButton
+                        android:id="@+id/font_increase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@android:color/white"
+                        android:contentDescription="@string/usersettings_description_font_increase"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/icon_font_increase" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/black"
+                        android:text="@string/usersettings_label_font"
+                        android:textSize="16sp"/>
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/spinner_action_settings_intervall_values"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:spinnerMode="dialog"/>
+                </LinearLayout>
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:id="@+id/rl_font_family"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:layout_marginBottom="20dp">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_font_setting_title"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerVertical="true"-->
+<!--                        android:layout_marginEnd="20dp"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        android:text="@string/usersettings_label_font"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="16sp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_current_font_family"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerVertical="true"-->
+<!--                        android:layout_toStartOf="@+id/iv_font_select_more"-->
+<!--                        android:layout_toEndOf="@+id/tv_font_setting_title"-->
+<!--                        android:ellipsize="end"-->
+<!--                        android:maxLines="1"-->
+<!--                        android:text="当前字体"-->
+<!--                        android:textSize="14sp" />-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/iv_font_select_more"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="12dp"-->
+<!--                        android:layout_alignParentEnd="true"-->
+<!--                        android:layout_centerVertical="true"-->
+<!--                        android:src="@drawable/ic_right" />-->
+<!--                </RelativeLayout>-->
+
+                <RadioGroup
+                    android:id="@+id/appearance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:background="@drawable/bg_reader_tab"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/appearance_default"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rbtn_selector"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:text="@string/usersettings_appearance_default"
+                        android:textColor="@drawable/rbtn_textcolor_selector"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/appearance_sepia"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rbtn_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:text="@string/usersettings_appearance_sepia"
+                        android:textColor="@drawable/rbtn_textcolor_selector"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/appearance_night"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rbtn_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:text="@string/usersettings_appearance_night"
+                        android:textColor="@drawable/rbtn_textcolor_selector"
+                        android:textSize="14sp" />
+
+                </RadioGroup>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>
+
