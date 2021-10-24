@@ -13,6 +13,7 @@ import android.view.*
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.drake.channel.sendEvent
 import com.mcxiaoke.koi.ext.toast
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
 import com.shawnyang.jpreader_lib.ui.reader.outline.ReaderOutlineSheet
@@ -20,12 +21,10 @@ import com.shawnyang.jpreader_lib.R
 import com.shawnyang.jpreader_lib.data.AnalyzeEvent
 import com.shawnyang.jpreader_lib.data.db.BookData
 import com.shawnyang.jpreader_lib.exts.toggleSystemUi
-import org.greenrobot.eventbus.EventBus
 import org.readium.r2.navigator.Navigator
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.shared.APPEARANCE_REF
 import org.readium.r2.shared.publication.Publication
-import timber.log.Timber
 import java.net.URL
 
 class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listener {
@@ -146,7 +145,7 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
 
     override fun onTapAnalyze(content: String) {
         //段落分析
-        EventBus.getDefault().post(AnalyzeEvent(content))
+        sendEvent(AnalyzeEvent(content))
     }
 
     companion object {

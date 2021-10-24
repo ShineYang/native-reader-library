@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.afollestad.materialdialogs.MaterialDialog
+import com.drake.channel.receiveEventHandler
 import com.google.gson.Gson
 import com.mcxiaoke.koi.ext.toast
 import com.shawnyang.jpreader_lib.data.AnalyzeEvent
@@ -18,13 +19,7 @@ import com.shawnyang.jpreader_lib.exts.ContentResolverUtil
 import com.shawnyang.jpreader_lib.exts.moveTo
 import com.shawnyang.jpreader_lib.exts.toFile
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderContract
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
+import kotlinx.coroutines.*
 import org.readium.r2.shared.Injectable
 import org.readium.r2.shared.extensions.mediaType
 import org.readium.r2.shared.extensions.toPng
@@ -66,13 +61,16 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
 
     private val FLUTTER_CHANNEL_NAME = "update_tunnel"
     private val UPDATE_DB_SUCCESS = "update_db_success"
+    private var eventJob: Job? = null
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        EventBus.getDefault().register(activity)
         initServer()
+        eventJob = receiveEventHandler<AnalyzeEvent> {
+            Timber.v(it.content)
+        }
     }
 
     private fun initServer() {
@@ -158,12 +156,6 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                 onResult("")
             }
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: AnalyzeEvent) {
-        //todo messageChannel?.send(event.content)
-        Timber.v(event.content)
     }
 
     //打开path下的书籍
@@ -372,7 +364,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        EventBus.getDefault().unregister(activity)
+        eventJob?.cancel()
         stopServer()
     }
 }
