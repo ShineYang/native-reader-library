@@ -17,6 +17,7 @@ import com.mcxiaoke.koi.ext.toast
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
 import com.shawnyang.jpreader_lib.ui.reader.outline.ReaderOutlineSheet
 import com.shawnyang.jpreader_lib.R
+import com.shawnyang.jpreader_lib.data.AnalyzeEvent
 import com.shawnyang.jpreader_lib.data.db.BookData
 import com.shawnyang.jpreader_lib.exts.toggleSystemUi
 import org.greenrobot.eventbus.EventBus
@@ -145,7 +146,7 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
 
     override fun onTapAnalyze(content: String) {
         //段落分析
-        EventBus.getDefault().post(content)
+        EventBus.getDefault().post(AnalyzeEvent(content))
     }
 
     companion object {

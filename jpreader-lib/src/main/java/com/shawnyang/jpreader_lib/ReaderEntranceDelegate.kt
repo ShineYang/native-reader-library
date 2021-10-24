@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.mcxiaoke.koi.ext.toast
+import com.shawnyang.jpreader_lib.data.AnalyzeEvent
 import com.shawnyang.jpreader_lib.data.Book
 import com.shawnyang.jpreader_lib.data.BooksDatabase
 import com.shawnyang.jpreader_lib.data.books
@@ -70,7 +71,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
         get() = Dispatchers.Main
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        //EventBus.getDefault().register(activity)
+        EventBus.getDefault().register(activity)
         initServer()
     }
 
@@ -157,6 +158,12 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                 onResult("")
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: AnalyzeEvent) {
+        //todo messageChannel?.send(event.content)
+        Timber.v(event.content)
     }
 
     //打开path下的书籍
@@ -365,7 +372,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        //EventBus.getDefault().unregister(this)
+        EventBus.getDefault().unregister(activity)
         stopServer()
     }
 }

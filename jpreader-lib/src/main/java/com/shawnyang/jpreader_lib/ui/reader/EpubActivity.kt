@@ -93,7 +93,6 @@ class EpubActivity : R2EpubActivity() {
             val bookId = inputData.bookId
             val baseUrl = requireNotNull(inputData.baseUrl)
             readerFragment = EpubReaderFragment.newInstance(baseUrl, bookId)
-
             supportFragmentManager.commitNow {
                 replace(R.id.activity_container, readerFragment, READER_FRAGMENT_TAG)
             }
@@ -122,7 +121,8 @@ class EpubActivity : R2EpubActivity() {
     }
 
     override fun onTap(point: PointF): Boolean {
-        return super.onTap(point)
+        toggleSystemUi()
+        return true
     }
 
     private fun updateSystemUiVisibility() {
