@@ -24,10 +24,6 @@ import com.shawnyang.jpreader_lib.ui.reader.EpubActivity
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderContract
 import kotlinx.coroutines.*
 import org.readium.r2.shared.Injectable
-import org.readium.r2.shared.extensions.mediaType
-import org.readium.r2.shared.extensions.putPublication
-import org.readium.r2.shared.extensions.toPng
-import org.readium.r2.shared.extensions.tryOrNull
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.asset.FileAsset
 import org.readium.r2.shared.publication.asset.PublicationAsset
@@ -47,13 +43,15 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import io.flutter.plugin.common.PluginRegistry;
+import org.readium.r2.shared.extensions.*
 
 /**
  * @author ShineYang
  * @date 2021/10/22
  * description:
  */
-class ReaderEntranceDelegate(val activity: Activity) : Application.ActivityLifecycleCallbacks, CoroutineScope {
+class ReaderEntranceDelegate(val activity: Activity) : Application.ActivityLifecycleCallbacks, CoroutineScope, PluginRegistry.ActivityResultListener {
     //    private val FLUTTER_CHANNEL_NAME = "update_tunnel"
     //    private val CHANNEL_NAME = "native_plugin"
 
@@ -64,6 +62,10 @@ class ReaderEntranceDelegate(val activity: Activity) : Application.ActivityLifec
     private lateinit var streamer: Streamer
     private lateinit var readerLauncher: ActivityResultLauncher<ReaderContract.Input>
     private lateinit var documentPickerLauncher: ActivityResultLauncher<String>
+
+    private val PICK_FILE = 2001
+    private val READER_RESULT = 2002
+
 
     private val UPDATE_DB_SUCCESS = "update_db_success"
     private val SEND_ANALYZE_CONTENT = "send_analyze_content"
@@ -127,6 +129,36 @@ class ReaderEntranceDelegate(val activity: Activity) : Application.ActivityLifec
 //        }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        when (requestCode) {
+            PICK_FILE -> {
+                val uri = data?.data
+                uri?.let {
+                    importPublicationFromUri(it)
+                }
+                return true
+            }
+
+            READER_RESULT->{
+                if (data != null){
+                    val path = data.getStringExtra("publicationPath")
+                        ?: throw Exception("publicationPath required")
+                    data.destroyPublication(null)
+                    val pubData = ReaderContract.Output(
+                        file = File(path),
+                        publication = data.getPublication(null),
+                        deleteOnResult = data.getBooleanExtra("deleteOnResult", false)
+                    )
+                    tryOrNull { pubData.publication.close() }
+                    Timber.d("Publication closed")
+                    if (pubData.deleteOnResult)
+                        tryOrNull { pubData.file.delete() }
+                }
+            }
+        }
+        return false
+    }
+
 
     fun createOpenIntent(context: Context, input: ReaderContract.Input): Intent {
         val intent = Intent(
@@ -169,8 +201,9 @@ class ReaderEntranceDelegate(val activity: Activity) : Application.ActivityLifec
             MessageType.FilePicker.methodName -> {
                 //file picker
                 val intent = Intent(Intent.ACTION_GET_CONTENT)
-                    .addCategory(Intent.CATEGORY_OPENABLE).setType("application/epub+zip")
-                activity.startActivity(intent)
+                    .addCategory(Intent.CATEGORY_OPENABLE)
+                    .setType("application/epub+zip")
+                activity.startActivityForResult(intent, PICK_FILE)
                 //todo remove this test code
                 onResult("打开文件选择器成功")
             }
