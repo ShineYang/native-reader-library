@@ -49,7 +49,7 @@ import kotlin.coroutines.suspendCoroutine
  * @date 2021/10/22
  * description:
  */
-class ReaderEntranceDelegate(val embedActivity: Activity) :ComponentActivity(), Application.ActivityLifecycleCallbacks, CoroutineScope {
+class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecycleCallbacks, CoroutineScope {
     //    private val FLUTTER_CHANNEL_NAME = "update_tunnel"
     //    private val CHANNEL_NAME = "native_plugin"
 
@@ -90,7 +90,7 @@ class ReaderEntranceDelegate(val embedActivity: Activity) :ComponentActivity(), 
         s.localPort
         s.close()
         localPort = s.localPort
-        server = Server(localPort, embedActivity.applicationContext)
+        server = Server(localPort, this)
 
         val properties = Properties()
         val inputStream = assets.open("config/config.properties")
