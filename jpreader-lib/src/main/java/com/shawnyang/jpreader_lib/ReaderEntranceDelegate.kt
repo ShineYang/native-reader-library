@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.net.Uri
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -71,16 +72,25 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
         private const val REQUEST_CODE_LAUNCHER = 2002
     }
 
-
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
         initServer()
         eventJob = receiveEventHandler<AnalyzeEvent> {
             embedListener?.onReceiveMessage(mapOf(SEND_ANALYZE_CONTENT to it.content))
             Timber.v(it.content)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startServer()
+    }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+
     }
 
     private fun initServer() {
@@ -364,7 +374,6 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
     }
 
     override fun onActivityStarted(activity: Activity) {
-        startServer()
     }
 
     override fun onActivityResumed(activity: Activity) {
@@ -380,6 +389,10 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
     }
 
     override fun onActivityDestroyed(activity: Activity) {
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         eventJob?.cancel()
         stopServer()
     }
