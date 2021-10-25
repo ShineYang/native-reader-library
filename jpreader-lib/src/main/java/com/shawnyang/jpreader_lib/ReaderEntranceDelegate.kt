@@ -49,7 +49,7 @@ import kotlin.coroutines.suspendCoroutine
  * @date 2021/10/22
  * description:
  */
-class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.ActivityLifecycleCallbacks, CoroutineScope {
+class ReaderEntranceDelegate :ComponentActivity(), Application.ActivityLifecycleCallbacks, CoroutineScope {
     //    private val FLUTTER_CHANNEL_NAME = "update_tunnel"
     //    private val CHANNEL_NAME = "native_plugin"
 
@@ -65,6 +65,13 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
     private val SEND_ANALYZE_CONTENT = "send_analyze_content"
     private var eventJob: Job? = null
 
+
+    companion object {
+        private const val REQUEST_CODE_CHOOSER = 2001
+        private const val REQUEST_CODE_LAUNCHER = 2002
+    }
+
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
@@ -78,28 +85,28 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
 
     private fun initServer() {
         //init streamer(parser)
-        streamer = Streamer(activity)
+        streamer = Streamer(this)
         val s = ServerSocket(if (BuildConfig.DEBUG) 8080 else 0)
         s.localPort
         s.close()
         localPort = s.localPort
-        server = Server(localPort, activity.applicationContext)
+        server = Server(localPort, this.applicationContext)
 
         val properties = Properties()
-        val inputStream = activity.assets.open("config/config.properties")
+        val inputStream = assets.open("config/config.properties")
         properties.load(inputStream)
         val useExternalFileDir = properties.getProperty("useExternalFileDir", "false")!!.toBoolean()
 
         R2DIRECTORY = if (useExternalFileDir) {
-            activity.getExternalFilesDir(null)?.path + "/"
+            getExternalFilesDir(null)?.path + "/"
         } else {
-            activity.filesDir.path + "/"
+            filesDir.path + "/"
         }
 
-        database = BooksDatabase(activity)
+        database = BooksDatabase(this)
         books = database.books.list()
 
-        readerLauncher = activity.registerForActivityResult(ReaderContract()) { pubData: ReaderContract.Output? ->
+        readerLauncher = registerForActivityResult(ReaderContract()) { pubData: ReaderContract.Output? ->
             if (pubData == null)
                 return@registerForActivityResult
 
@@ -110,7 +117,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
         }
 
         //文件选择器
-        documentPickerLauncher = activity.registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        documentPickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 importPublicationFromUri(it)
             }
@@ -175,14 +182,14 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                 book = database.books.queryById(id)
                 if (book != null) {
                     val asset = FileAsset(File(book!!.href))
-                    streamer.open(asset, allowUserInteraction = true, sender = activity)
+                    streamer.open(asset, allowUserInteraction = true, sender = this@ReaderEntranceDelegate)
                         .onFailure {
-                            Timber.d(it.getUserMessage(activity))
+                            Timber.d(it.getUserMessage(this@ReaderEntranceDelegate))
                         }
                         .onSuccess { publication ->
                             if (publication.isRestricted) {
                                 publication.protectionError?.let { error ->
-                                    Timber.d(error.getUserMessage(activity))
+                                    Timber.d(error.getUserMessage(this@ReaderEntranceDelegate))
                                 }
                             } else {
                                 readerLauncher.launch(
@@ -241,13 +248,13 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                     Timber.e("Trying to add a RWPM to the database from a file without sourceUrl.")
                     return
                 }
-        streamer.open(libraryAsset, allowUserInteraction = false, sender = activity)
+        streamer.open(libraryAsset, allowUserInteraction = false, sender = this@ReaderEntranceDelegate)
             .onSuccess {
                 addPublicationToDatabase(bddHref, extension, it).let { success ->
                     //给出添加结果提示
                     //发送更新成功消息
                     if (success) {
-                        activity.toast("添加成功")
+                        toast("添加成功")
                         embedListener?.onReceiveMessage(mapOf(UPDATE_DB_SUCCESS to ""))
                     }
                     if (success && isRwpm)
@@ -258,7 +265,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                 tryOrNull { libraryAsset.file.delete() }
                 Timber.d(it)
                 //打开书籍失败
-                activity.toast("打开失败")
+                toast("打开失败")
             }
     }
 
@@ -297,7 +304,7 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
 
     // 重复添加验证
     private suspend fun confirmAddDuplicateBook(): Boolean = suspendCoroutine { cont ->
-        MaterialDialog(activity).show {
+        MaterialDialog(this@ReaderEntranceDelegate).show {
             cancelOnTouchOutside(false)
             title(R.string.dialog_add_title)
             message(text = "这本书已经存在了, 是否再次添加?")
@@ -314,15 +321,15 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
 
     private suspend fun Uri.copyToTempFile(): File? = tryOrNull {
         val filename = UUID.randomUUID().toString()
-        val mediaType = MediaType.ofUri(this, activity.contentResolver)
+        val mediaType = MediaType.ofUri(this, contentResolver)
         val path = "$R2DIRECTORY$filename.${mediaType?.fileExtension ?: "tmp"}"
-        ContentResolverUtil.getContentInputStream(activity, this, path)
+        ContentResolverUtil.getContentInputStream(this@ReaderEntranceDelegate, this, path)
         return File(path)
     }
 
     private fun prepareToServe(publication: Publication, asset: PublicationAsset): URL? {
         val userProperties =
-            activity.applicationContext.filesDir.path + "/" + Injectable.Style.rawValue + "/UserProperties.json"
+            applicationContext.filesDir.path + "/" + Injectable.Style.rawValue + "/UserProperties.json"
         return server.addPublication(publication, userPropertiesFile = File(userProperties))
     }
 
@@ -342,10 +349,10 @@ class ReaderEntranceDelegate(val activity: ComponentActivity) : Application.Acti
                 if (BuildConfig.DEBUG) Timber.e(e)
             }
             if (server.isAlive) {
-                server.loadCustomResource(activity.assets.open("action/paragraph.js"), "paragraph.js", Injectable.Script)
-                server.loadCustomResource(activity.assets.open("search/mark.js"), "mark.js", Injectable.Script)
-                server.loadCustomResource(activity.assets.open("search/search.js"), "search.js", Injectable.Script)
-                server.loadCustomResource(activity.assets.open("search/mark.css"), "mark.css", Injectable.Style)
+                server.loadCustomResource(assets.open("action/paragraph.js"), "paragraph.js", Injectable.Script)
+                server.loadCustomResource(assets.open("search/mark.js"), "mark.js", Injectable.Script)
+                server.loadCustomResource(assets.open("search/search.js"), "search.js", Injectable.Script)
+                server.loadCustomResource(assets.open("search/mark.css"), "mark.css", Injectable.Style)
             }
         }
     }
