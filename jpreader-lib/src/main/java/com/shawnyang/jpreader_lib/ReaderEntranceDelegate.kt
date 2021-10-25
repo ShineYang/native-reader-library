@@ -2,15 +2,16 @@ package com.shawnyang.jpreader_lib
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.PersistableBundle
-import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.afollestad.materialdialogs.MaterialDialog
 import com.drake.channel.receiveEventHandler
 import com.google.gson.Gson
+import com.mcxiaoke.koi.ext.startActivity
 import com.mcxiaoke.koi.ext.toast
 import com.shawnyang.jpreader_lib.data.AnalyzeEvent
 import com.shawnyang.jpreader_lib.data.Book
@@ -19,10 +20,12 @@ import com.shawnyang.jpreader_lib.data.books
 import com.shawnyang.jpreader_lib.exts.ContentResolverUtil
 import com.shawnyang.jpreader_lib.exts.moveTo
 import com.shawnyang.jpreader_lib.exts.toFile
+import com.shawnyang.jpreader_lib.ui.reader.EpubActivity
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderContract
 import kotlinx.coroutines.*
 import org.readium.r2.shared.Injectable
 import org.readium.r2.shared.extensions.mediaType
+import org.readium.r2.shared.extensions.putPublication
 import org.readium.r2.shared.extensions.toPng
 import org.readium.r2.shared.extensions.tryOrNull
 import org.readium.r2.shared.publication.Publication
@@ -50,7 +53,7 @@ import kotlin.coroutines.suspendCoroutine
  * @date 2021/10/22
  * description:
  */
-class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecycleCallbacks, CoroutineScope {
+class ReaderEntranceDelegate(val activity: Activity) : Application.ActivityLifecycleCallbacks, CoroutineScope {
     //    private val FLUTTER_CHANNEL_NAME = "update_tunnel"
     //    private val CHANNEL_NAME = "native_plugin"
 
@@ -75,68 +78,73 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Timber.v("========== onCreate")
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         eventJob = receiveEventHandler<AnalyzeEvent> {
             embedListener?.onReceiveMessage(mapOf(SEND_ANALYZE_CONTENT to it.content))
             Timber.v(it.content)
         }
         initServer()
-        Timber.v("========== onCreate end")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        startServer()
-        Timber.v("========== onStart end")
-    }
-
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-
     }
 
     private fun initServer() {
         //init streamer(parser)
-        streamer = Streamer(this)
+        streamer = Streamer(activity)
         val s = ServerSocket(if (BuildConfig.DEBUG) 8080 else 0)
         s.localPort
         s.close()
         localPort = s.localPort
-        server = Server(localPort, this)
+        server = Server(localPort, activity)
 
         val properties = Properties()
-        val inputStream = assets.open("config/config.properties")
+        val inputStream = activity.assets.open("config/config.properties")
         properties.load(inputStream)
         val useExternalFileDir = properties.getProperty("useExternalFileDir", "false")!!.toBoolean()
 
         R2DIRECTORY = if (useExternalFileDir) {
-            getExternalFilesDir(null)?.path + "/"
+            activity.getExternalFilesDir(null)?.path + "/"
         } else {
-            filesDir.path + "/"
+            activity.filesDir.path + "/"
         }
 
-        database = BooksDatabase(this)
+        database = BooksDatabase(activity)
         books = database.books.list()
 
-        readerLauncher = registerForActivityResult(ReaderContract()) { pubData: ReaderContract.Output? ->
-            if (pubData == null)
-                return@registerForActivityResult
-
-            tryOrNull { pubData.publication.close() }
-            Timber.d("Publication closed")
-            if (pubData.deleteOnResult)
-                tryOrNull { pubData.file.delete() }
-        }
+//        readerLauncher = registerForActivityResult(ReaderContract()) { pubData: ReaderContract.Output? ->
+//            if (pubData == null)
+//                return@registerForActivityResult
+//
+//            tryOrNull { pubData.publication.close() }
+//            Timber.d("Publication closed")
+//            if (pubData.deleteOnResult)
+//                tryOrNull { pubData.file.delete() }
+//        }
 
         //文件选择器
-        documentPickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                importPublicationFromUri(it)
-            }
-        }
+//        documentPickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+//            uri?.let {
+//                importPublicationFromUri(it)
+//            }
+//        }
+    }
 
-        Timber.v("==========initServer end")
+
+    fun createOpenIntent(context: Context, input: ReaderContract.Input): Intent {
+        val intent = Intent(
+            context, when (input.mediaType) {
+                MediaType.EPUB -> EpubActivity::class.java
+                else -> throw IllegalArgumentException("Unknown [mediaType]")
+            }
+        )
+
+        return intent.apply {
+            putPublication(input.publication)
+            putExtra("bookId", input.bookId)
+            putExtra("publicationPath", input.file.path)
+            putExtra("publicationFileName", input.file.name)
+            putExtra("deleteOnResult", input.deleteOnResult)
+            putExtra("baseUrl", input.baseUrl?.toString())
+            putExtra("locator", input.initialLocator)
+        }
     }
 
     //method call 传入的消息
@@ -160,7 +168,9 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
 
             MessageType.FilePicker.methodName -> {
                 //file picker
-                documentPickerLauncher.launch("application/epub+zip")
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                    .addCategory(Intent.CATEGORY_OPENABLE).setType("application/epub+zip")
+                activity.startActivity(intent)
                 //todo remove this test code
                 onResult("打开文件选择器成功")
             }
@@ -197,25 +207,27 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
                 book = database.books.queryById(id)
                 if (book != null) {
                     val asset = FileAsset(File(book!!.href))
-                    streamer.open(asset, allowUserInteraction = true, sender = this@ReaderEntranceDelegate)
+                    streamer.open(asset, allowUserInteraction = true, sender = activity)
                         .onFailure {
-                            Timber.d(it.getUserMessage(this@ReaderEntranceDelegate))
+                            Timber.d(it.getUserMessage(activity))
                         }
                         .onSuccess { publication ->
                             if (publication.isRestricted) {
                                 publication.protectionError?.let { error ->
-                                    Timber.d(error.getUserMessage(this@ReaderEntranceDelegate))
+                                    Timber.d(error.getUserMessage(activity))
                                 }
                             } else {
-                                readerLauncher.launch(
-                                    ReaderContract.Input(
-                                        file = asset.file,
-                                        mediaType = asset.mediaType(),
-                                        publication = publication,
-                                        bookId = book!!.id!!,
-                                        deleteOnResult = false,
-                                        initialLocator = database.books.currentLocator(book!!.id!!),
-                                        baseUrl = prepareToServe(publication, asset)
+                                activity.startActivity(
+                                    createOpenIntent(
+                                        activity, ReaderContract.Input(
+                                            file = asset.file,
+                                            mediaType = asset.mediaType(),
+                                            publication = publication,
+                                            bookId = book!!.id!!,
+                                            deleteOnResult = false,
+                                            initialLocator = database.books.currentLocator(book!!.id!!),
+                                            baseUrl = prepareToServe(publication, asset)
+                                        )
                                     )
                                 )
                             }
@@ -269,7 +281,7 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
                     //给出添加结果提示
                     //发送更新成功消息
                     if (success) {
-                        toast("添加成功")
+                        activity.toast("添加成功")
                         embedListener?.onReceiveMessage(mapOf(UPDATE_DB_SUCCESS to ""))
                     }
                     if (success && isRwpm)
@@ -280,7 +292,7 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
                 tryOrNull { libraryAsset.file.delete() }
                 Timber.d(it)
                 //打开书籍失败
-                toast("打开失败")
+                activity.toast("打开失败")
             }
     }
 
@@ -319,7 +331,7 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
 
     // 重复添加验证
     private suspend fun confirmAddDuplicateBook(): Boolean = suspendCoroutine { cont ->
-        MaterialDialog(this@ReaderEntranceDelegate).show {
+        MaterialDialog(activity).show {
             cancelOnTouchOutside(false)
             title(R.string.dialog_add_title)
             message(text = "这本书已经存在了, 是否再次添加?")
@@ -336,15 +348,15 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
 
     private suspend fun Uri.copyToTempFile(): File? = tryOrNull {
         val filename = UUID.randomUUID().toString()
-        val mediaType = MediaType.ofUri(this, contentResolver)
+        val mediaType = MediaType.ofUri(this, activity.contentResolver)
         val path = "$R2DIRECTORY$filename.${mediaType?.fileExtension ?: "tmp"}"
-        ContentResolverUtil.getContentInputStream(this@ReaderEntranceDelegate, this, path)
+        ContentResolverUtil.getContentInputStream(activity, this, path)
         return File(path)
     }
 
     private fun prepareToServe(publication: Publication, asset: PublicationAsset): URL? {
         val userProperties =
-            applicationContext.filesDir.path + "/" + Injectable.Style.rawValue + "/UserProperties.json"
+            activity.applicationContext.filesDir.path + "/" + Injectable.Style.rawValue + "/UserProperties.json"
         return server.addPublication(publication, userPropertiesFile = File(userProperties))
     }
 
@@ -364,10 +376,10 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
                 if (BuildConfig.DEBUG) Timber.e(e)
             }
             if (server.isAlive) {
-                server.loadCustomResource(assets.open("action/paragraph.js"), "paragraph.js", Injectable.Script)
-                server.loadCustomResource(assets.open("search/mark.js"), "mark.js", Injectable.Script)
-                server.loadCustomResource(assets.open("search/search.js"), "search.js", Injectable.Script)
-                server.loadCustomResource(assets.open("search/mark.css"), "mark.css", Injectable.Style)
+                server.loadCustomResource(activity.assets.open("action/paragraph.js"), "paragraph.js", Injectable.Script)
+                server.loadCustomResource(activity.assets.open("search/mark.js"), "mark.js", Injectable.Script)
+                server.loadCustomResource(activity.assets.open("search/search.js"), "search.js", Injectable.Script)
+                server.loadCustomResource(activity.assets.open("search/mark.css"), "mark.css", Injectable.Style)
             }
         }
     }
@@ -379,6 +391,7 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
     }
 
     override fun onActivityStarted(activity: Activity) {
+        startServer()
     }
 
     override fun onActivityResumed(activity: Activity) {
@@ -394,17 +407,15 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         eventJob?.cancel()
         stopServer()
     }
 
     var embedListener: OnSendMessageToEmbedListener? = null
         get() = field
-        set(value) { field = value}
+        set(value) {
+            field = value
+        }
 
 
     interface OnSendMessageToEmbedListener {
