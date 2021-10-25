@@ -75,18 +75,21 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        initServer()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Timber.v("========== onCreate")
         eventJob = receiveEventHandler<AnalyzeEvent> {
             embedListener?.onReceiveMessage(mapOf(SEND_ANALYZE_CONTENT to it.content))
             Timber.v(it.content)
         }
+        initServer()
+        Timber.v("========== onCreate end")
     }
 
     override fun onStart() {
         super.onStart()
         startServer()
+        Timber.v("========== onStart end")
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -132,6 +135,8 @@ class ReaderEntranceDelegate() :ComponentActivity(), Application.ActivityLifecyc
                 importPublicationFromUri(it)
             }
         }
+
+        Timber.v("==========initServer end")
     }
 
     //method call 传入的消息
