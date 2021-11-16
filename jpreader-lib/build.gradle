@@ -114,3 +114,16 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.shawnyang.jpreader_lib'
+                artifactId = 'jpreader_lib'
+                version = '1.0.0'
+            }
+        }
+    }
+}
