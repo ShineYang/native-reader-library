@@ -10,7 +10,6 @@
 
 package com.shawnyang.jpreader_lib.ui.reader
 
-import android.annotation.SuppressLint
 import android.graphics.PointF
 import android.graphics.Rect
 import android.os.Bundle
@@ -18,6 +17,9 @@ import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.*
 import android.view.accessibility.AccessibilityManager
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.ViewModelProvider
@@ -32,6 +34,7 @@ import kotlinx.android.synthetic.main.activity_reader.*
 import org.jetbrains.anko.toast
 import org.json.JSONException
 import org.json.JSONObject
+import org.greenrobot.eventbus.EventBus
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.epub.R2EpubActivity
 import org.readium.r2.navigator.pager.R2EpubPageFragment
@@ -60,7 +63,7 @@ class EpubActivity : R2EpubActivity() {
     lateinit var userSettings: UserSettings
 
     override fun navigatorFragment(): EpubNavigatorFragment =
-        readerFragment.childFragmentManager.findFragmentByTag(getString(R.string.epub_navigator_tag)) as EpubNavigatorFragment
+            readerFragment.childFragmentManager.findFragmentByTag(getString(R.string.epub_navigator_tag)) as EpubNavigatorFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val inputData = ReaderContract.parseIntent(this)
@@ -77,12 +80,12 @@ class EpubActivity : R2EpubActivity() {
         */
 
         supportFragmentManager.setFragmentResultListener(
-            OutlineContract.REQUEST_KEY,
-            this,
-            FragmentResultListener { _, result ->
-                val locator = OutlineContract.parseResult(result).destination
-                closeOutlineFragment(locator)
-            }
+                OutlineContract.REQUEST_KEY,
+                this,
+                FragmentResultListener { _, result ->
+                    val locator = OutlineContract.parseResult(result).destination
+                    closeOutlineFragment(locator)
+                }
         )
 
         supportFragmentManager.addOnBackStackChangedListener {
@@ -93,6 +96,7 @@ class EpubActivity : R2EpubActivity() {
             val bookId = inputData.bookId
             val baseUrl = requireNotNull(inputData.baseUrl)
             readerFragment = EpubReaderFragment.newInstance(baseUrl, bookId)
+
             supportFragmentManager.commitNow {
                 replace(R.id.activity_container, readerFragment, READER_FRAGMENT_TAG)
             }
@@ -108,7 +112,6 @@ class EpubActivity : R2EpubActivity() {
             activity_container.dispatchApplyWindowInsets(newInsets)
         }
 
-
         supportFragmentManager.addOnBackStackChangedListener {
             updateSystemUiVisibility()
         }
@@ -121,15 +124,16 @@ class EpubActivity : R2EpubActivity() {
     }
 
     override fun onTap(point: PointF): Boolean {
-        toggleSystemUi()
         return true
     }
 
     private fun updateSystemUiVisibility() {
-        if (readerFragment.isHidden)
-            showSystemUi()
-        else
-            readerFragment.updateSystemUiVisibility()
+//        if (readerFragment.isHidden)
+//            showSystemUi()
+//        else
+//            readerFragment.updateSystemUiVisibility()
+
+        toggleSystemUi()
 
         // Seems to be required to adjust padding when transitioning from the outlines to the screen reader
         activity_container.requestApplyInsets()
@@ -152,14 +156,13 @@ class EpubActivity : R2EpubActivity() {
         return modelFactory
     }
 
-    @SuppressLint("JavascriptInterface")
     override fun onActionModeStarted(mode: ActionMode?) {
         super.onActionModeStarted(mode)
         mode?.menu?.run {
             menuInflater.inflate(R.menu.menu_action_mode, this)
             findItem(R.id.highlight).setOnMenuItemClickListener {
                 val currentFragment =
-                    ((resourcePager.adapter as R2PagerAdapter).mFragments.get((resourcePager.adapter as R2PagerAdapter).getItemId(resourcePager.currentItem))) as? R2EpubPageFragment
+                        ((resourcePager.adapter as R2PagerAdapter).mFragments.get((resourcePager.adapter as R2PagerAdapter).getItemId(resourcePager.currentItem))) as? R2EpubPageFragment
                 currentFragment?.webView?.getCurrentSelectionRect {
                     val rect = JSONObject(it).run {
                         try {
@@ -182,8 +185,23 @@ class EpubActivity : R2EpubActivity() {
         this.mode = mode
     }
 
-    override fun onPageLoaded() {
-        super.onPageLoaded()
+    override fun onPageChanged(pageIndex: Int, totalPages: Int, url: String) {
+        val currentFragment =
+                ((resourcePager.adapter as R2PagerAdapter).mFragments.get((resourcePager.adapter as R2PagerAdapter).getItemId(resourcePager.currentItem))) as? R2EpubPageFragment
+        val webView = currentFragment?.webView
+        loadParagraphTextInjection(webView)
+    }
+
+    private fun loadParagraphTextInjection(webView: WebView?){
+        webView?.webViewClient = object : WebViewClient(){
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val paragraph = request?.url?.getQueryParameters("paragraphText")
+                return if (paragraph != null && paragraph.size > 0){
+                    EventBus.getDefault().post(paragraph[0])
+                    true
+                }else false
+            }
+        }
     }
 
     override fun highlightActivated(id: String) {

@@ -13,12 +13,10 @@ import android.view.*
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.drake.channel.sendEvent
 import com.mcxiaoke.koi.ext.toast
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
 import com.shawnyang.jpreader_lib.ui.reader.outline.ReaderOutlineSheet
 import com.shawnyang.jpreader_lib.R
-import com.shawnyang.jpreader_lib.data.AnalyzeEvent
 import com.shawnyang.jpreader_lib.data.db.BookData
 import com.shawnyang.jpreader_lib.exts.toggleSystemUi
 import org.readium.r2.navigator.Navigator
@@ -54,20 +52,20 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
         val baseUrl = checkNotNull(requireArguments().getString(BASE_URL_ARG))
 
         childFragmentManager.fragmentFactory =
-            EpubNavigatorFragment.createFactory(
-                publication,
-                baseUrl,
-                persistence.savedLocation,
-                this
-            )
+                EpubNavigatorFragment.createFactory(
+                        publication,
+                        baseUrl,
+                        persistence.savedLocation,
+                        this
+                )
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         val navigatorFragmentTag = getString(R.string.epub_navigator_tag)
@@ -75,10 +73,10 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
         if (savedInstanceState == null) {
             childFragmentManager.commitNow {
                 add(
-                    R.id.fragment_reader_container,
-                    EpubNavigatorFragment::class.java,
-                    Bundle(),
-                    navigatorFragmentTag
+                        R.id.fragment_reader_container,
+                        EpubNavigatorFragment::class.java,
+                        Bundle(),
+                        navigatorFragmentTag
                 )
             }
         }
@@ -117,10 +115,10 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
 
             R.id.menu_settings -> {
                 activity.userSettings.userSettingsPopUp().showAsDropDown(
-                    requireActivity().findViewById(R.id.menu_settings),
-                    0,
-                    0,
-                    Gravity.END
+                        requireActivity().findViewById(R.id.menu_settings),
+                        0,
+                        0,
+                        Gravity.END
                 )
                 true
             }
@@ -141,11 +139,6 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
     override fun onTap(point: PointF): Boolean {
         requireActivity().toggleSystemUi()
         return true
-    }
-
-    override fun onTapAnalyze(content: String) {
-        //段落分析
-        sendEvent(AnalyzeEvent(content))
     }
 
     companion object {

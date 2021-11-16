@@ -9,6 +9,5 @@
 
     <application>
         <activity android:name=".ui.reader.EpubActivity" android:theme="@style/Theme.ReadiumAndroid"/>
-        <activity android:name=".ui.reader.ReaderActivity" android:theme="@style/Theme.ReadiumAndroid"/>
     </application>
 </manifest>

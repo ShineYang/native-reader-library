@@ -31,11 +31,11 @@ class UserSettings(var preferences: SharedPreferences, val context: Context, pri
 
     private val appearanceValues = listOf("readium-default-on", "readium-sepia-on", "readium-night-on")
     private val fontFamilyValues =
-        listOf("Original", "PT Serif", "Roboto", "Source Sans Pro", "Vollkorn", "OpenDyslexic", "AccessibleDfA", "IA Writer Duospace")
+            listOf("Original", "PT Serif", "Roboto", "Source Sans Pro", "Vollkorn", "OpenDyslexic", "AccessibleDfA", "IA Writer Duospace")
     private val textAlignmentValues = listOf("justify", "start")
     private val columnCountValues = listOf("auto", "1", "2")
 
-    private var fontSize = 100f
+    private var fontSize = 125f
     private var fontOverride = false
     private var fontFamily = 0
     private var appearance = 0
@@ -47,8 +47,8 @@ class UserSettings(var preferences: SharedPreferences, val context: Context, pri
     private var columnCount = 0
     private var wordSpacing = 0f
     private var letterSpacing = 0f
-    private var pageMargins = 2f
-    private var lineHeight = 1f
+    private var pageMargins = 1.5f
+    private var lineHeight = 1.25f
 
     private var userProperties: UserProperties
 
