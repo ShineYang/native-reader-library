@@ -3,6 +3,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'maven-publish'
 
+group = "com.shawnyang.jpreader_lib.jpreader-lib"
+version = '1.2.1'
+
 android {
     compileSdk 30
     defaultConfig {
@@ -113,17 +116,4 @@ dependencies {
     implementation 'com.github.loperSeven:tablayout-ext:0.1.4'
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.shawnyang.jpreader_lib'
-                artifactId = 'jpreader_lib'
-                version = '1.2.1'
-            }
-        }
-    }
 }
