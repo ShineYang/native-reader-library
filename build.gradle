@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-group = "com.shawnyang.jpreader_lib.jpreader-lib"
-version = '1.2.1'
+group = "com.shawnyang.jpreader_lib"
+version = "1.2.1"
 
 buildscript {
     ext.kotlin_version = '1.5.30'
