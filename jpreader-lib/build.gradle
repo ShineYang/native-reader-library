@@ -9,7 +9,7 @@ android {
         minSdk 21
         targetSdk 30
         versionCode 1
-        versionName "1.0"
+        versionName "1.2.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -122,7 +122,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.shawnyang.jpreader_lib'
                 artifactId = 'jpreader_lib'
-                version = '1.0.0'
+                version = '1.2.1'
             }
         }
     }
