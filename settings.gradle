@@ -1,1 +1,1 @@
-include ':jpreader-lib'
+rootProject.name = "androidreaderlibrary"
