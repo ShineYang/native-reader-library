@@ -1,10 +1,9 @@
-
 /**
  * Request Host app to mark paragraph as read
  */
-function HostAppParseParagraph(paragraphText) {
-  console.log(paragraphText);
-  Android.handleParagraph(paragraphText);
+function hostAppParseParagraph(paragraphText) {
+  var split = '?paragraphText=';
+  window.open(split + encodeURI(paragraphText), '_self');
 }
 
 function createButton(text) {
@@ -32,7 +31,7 @@ function injectParagraph() {
       var analyzeButton = createButton("分析")
       div.onclick = function() {
         var textContent = parsePtoPlainText(p)
-        HostAppParseParagraph(textContent.substring(0, textContent.length - 2))
+        hostAppParseParagraph(textContent.substring(0, textContent.length - 2))
       };
       div.append(analyzeButton)
       p.append(div)
