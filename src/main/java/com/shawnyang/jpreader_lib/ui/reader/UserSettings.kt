@@ -201,7 +201,7 @@ class UserSettings(var preferences: SharedPreferences, val context: Context, pri
                 // Makes the selected font appear in dark
                 // If this is the selected item position
                 if (position == fontFamily.index) {
-                    v!!.setBackgroundColor(context.color(R.color.colorPrimaryDark))
+                    v!!.setBackgroundColor(context.color(R.color.reader_theme_color))
                     v.findViewById<TextView>(android.R.id.text1).setTextColor(Color.WHITE)
 
                 } else {
