@@ -11,10 +11,8 @@
 package com.shawnyang.jpreader_lib.ui.reader
 
 import android.graphics.PointF
-import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
-import android.util.DisplayMetrics
 import android.view.*
 import android.view.accessibility.AccessibilityManager
 import android.webkit.WebResourceRequest
@@ -32,8 +30,6 @@ import com.shawnyang.jpreader_lib.exts.*
 import com.shawnyang.jpreader_lib.ui.reader.outline.OutlineContract
 import kotlinx.android.synthetic.main.activity_reader.*
 import org.jetbrains.anko.toast
-import org.json.JSONException
-import org.json.JSONObject
 import org.greenrobot.eventbus.EventBus
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.epub.R2EpubActivity
@@ -123,18 +119,11 @@ class EpubActivity : R2EpubActivity() {
         updateActivityTitle()
     }
 
-    override fun onTap(point: PointF): Boolean {
-        return true
-    }
-
     private fun updateSystemUiVisibility() {
-//        if (readerFragment.isHidden)
-//            showSystemUi()
-//        else
-//            readerFragment.updateSystemUiVisibility()
-
-        toggleSystemUi()
-
+        if (readerFragment.isHidden)
+            showSystemUi()
+        else
+            readerFragment.updateSystemUiVisibility()
         // Seems to be required to adjust padding when transitioning from the outlines to the screen reader
         activity_container.requestApplyInsets()
     }
@@ -154,35 +143,6 @@ class EpubActivity : R2EpubActivity() {
 
     override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory {
         return modelFactory
-    }
-
-    override fun onActionModeStarted(mode: ActionMode?) {
-        super.onActionModeStarted(mode)
-        mode?.menu?.run {
-            menuInflater.inflate(R.menu.menu_action_mode, this)
-            findItem(R.id.highlight).setOnMenuItemClickListener {
-                val currentFragment =
-                        ((resourcePager.adapter as R2PagerAdapter).mFragments.get((resourcePager.adapter as R2PagerAdapter).getItemId(resourcePager.currentItem))) as? R2EpubPageFragment
-                currentFragment?.webView?.getCurrentSelectionRect {
-                    val rect = JSONObject(it).run {
-                        try {
-                            val display = windowManager.defaultDisplay
-                            val metrics = DisplayMetrics()
-                            display.getMetrics(metrics)
-                            val left = getDouble("left")
-                            val width = getDouble("width")
-                            val top = getDouble("top") * metrics.density
-                            val height = getDouble("height") * metrics.density
-                            Rect(left.toInt(), top.toInt(), width.toInt() + left.toInt(), top.toInt() + height.toInt())
-                        } catch (e: JSONException) {
-                            null
-                        }
-                    }
-                }
-                true
-            }
-        }
-        this.mode = mode
     }
 
     override fun onPageChanged(pageIndex: Int, totalPages: Int, url: String) {
@@ -253,7 +213,7 @@ class EpubActivity : R2EpubActivity() {
     override fun onPageEnded(end: Boolean) {
         if (isExploreByTouchEnabled) {
             if (!pageEnded == end && end) {
-                toast("End of chapter")
+                toast("已到最后")
             }
             pageEnded = end
         }
