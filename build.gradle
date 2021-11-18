@@ -89,11 +89,11 @@ dependencies {
     implementation "com.duolingo.open:rtl-viewpager:1.0.3"
     implementation "com.github.abacritt:sectionedmergeadapter:0.2"
     //noinspection GradleDependency
-    implementation ("com.github.edrlab.nanohttpd:nanohttpd:master-SNAPSHOT") {
+    api ("com.github.edrlab.nanohttpd:nanohttpd:master-SNAPSHOT") {
         exclude group: 'org.parboiled'
     }
     //noinspection GradleDependency
-    implementation ("com.github.edrlab.nanohttpd:nanohttpd-nanolets:master-SNAPSHOT") {
+    api ("com.github.edrlab.nanohttpd:nanohttpd-nanolets:master-SNAPSHOT") {
         exclude group: 'org.parboiled'
     }
     implementation "com.github.kittinunf.fuel:fuel:2.2.2"
