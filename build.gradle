@@ -129,7 +129,7 @@ dependencies {
     api "org.slf4j:slf4j-nop:1.7.30"
 
     final readium_version = '2.1.1'
-    api "com.github.readium.kotlin-toolkit:readium-shared:$readium_version"
+    api 'com.github.ShineYang:r2-shared-kotlin-develop:1.0.5'
     api "com.github.readium.kotlin-toolkit:readium-streamer:$readium_version"
     api "com.github.readium.kotlin-toolkit:readium-navigator:$readium_version"
     api "com.github.readium.kotlin-toolkit:readium-opds:$readium_version"
