@@ -130,10 +130,18 @@ dependencies {
 
     final readium_version = '2.1.1'
     api 'com.github.ShineYang:r2-shared-kotlin-develop:1.0.5'
-    api "com.github.readium.kotlin-toolkit:readium-streamer:$readium_version"
-    api "com.github.readium.kotlin-toolkit:readium-navigator:$readium_version"
-    api "com.github.readium.kotlin-toolkit:readium-opds:$readium_version"
-    api "com.github.readium.kotlin-toolkit:readium-lcp:$readium_version"
+    api ("com.github.readium.kotlin-toolkit:readium-streamer:$readium_version"){
+        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
+    }
+    api ("com.github.readium.kotlin-toolkit:readium-navigator:$readium_version"){
+        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
+    }
+    api ("com.github.readium.kotlin-toolkit:readium-opds:$readium_version"){
+        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
+    }
+    api ("com.github.readium.kotlin-toolkit:readium-lcp:$readium_version"){
+        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
+    }
     api 'com.google.code.gson:gson:2.8.8'
 
     api 'com.github.loperSeven:tablayout-ext:0.1.4'
