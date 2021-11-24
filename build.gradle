@@ -17,14 +17,18 @@ buildscript {
     }
 }
 
-repositories {
-    google()
-    jcenter()
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    }
 }
+
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
