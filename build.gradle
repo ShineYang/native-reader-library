@@ -29,7 +29,6 @@ allprojects {
     }
 }
 
-
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -127,25 +126,12 @@ dependencies {
     api "org.jetbrains.anko:anko-sqlite:0.10.8"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
 
+    api 'com.github.ShineYang:kotlin-toolkit:2.1.2'
     // AM NOTE: needs to stay this version for now (June 24,2020)
     //noinspection GradleDependency
     api 'org.jsoup:jsoup:1.13.1'
     api "org.slf4j:slf4j-nop:1.7.30"
 
-    final readium_version = '2.1.1'
-    api project(':shared')
-    api ("com.github.readium.kotlin-toolkit:readium-streamer:$readium_version"){
-        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
-    }
-    api ("com.github.readium.kotlin-toolkit:readium-navigator:$readium_version"){
-        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
-    }
-    api ("com.github.readium.kotlin-toolkit:readium-opds:$readium_version"){
-        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
-    }
-    api ("com.github.readium.kotlin-toolkit:readium-lcp:$readium_version"){
-        exclude group: "com.github.readium.kotlin-toolkit", module: "readium-shared"
-    }
     api 'com.google.code.gson:gson:2.8.8'
 
     api 'com.github.loperSeven:tablayout-ext:0.1.4'

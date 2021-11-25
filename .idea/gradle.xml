@@ -4,6 +4,24 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/checkouts/kotlin-toolkit" name="Readium">
+                <projects>
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit" />
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium" />
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/lcp" />
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/navigator" />
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/opds" />
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/shared" />
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/streamer" />
+                  <project path="$PROJECT_DIR$/checkouts/kotlin-toolkit/test-app" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -11,7 +29,14 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/lcp" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/navigator" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/opds" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/shared" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit/readium/streamer" />
+            <option value="$PROJECT_DIR$/checkouts/kotlin-toolkit/test-app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

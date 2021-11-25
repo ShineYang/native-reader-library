@@ -1,2 +1,15 @@
+plugins {
+    id 'me.champeau.includegit' version '0.1.2'
+}
+
 rootProject.name = "androidreaderlibrary"
-include ':shared'
+
+gitRepositories {
+    include('kotlin-toolkit') {
+        uri = 'https://github.com/ShineYang/kotlin-toolkit.git'
+        // optional, set what branch to use
+        branch = 'develop'
+        // you can also use a tag
+        tag = '2.1.2'
+    }
+}
