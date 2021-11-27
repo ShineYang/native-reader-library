@@ -1,9 +1,12 @@
 package com.shawnyang.jpreader_lib.ui.reader.outline
 
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.loper7.tab_expand.ext.buildIndicator
 import com.loper7.tab_expand.ext.buildText
@@ -46,6 +49,10 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
             }
         )
 
+        val recyclerView = outline_pager.getRecyclerView()
+        recyclerView?.isNestedScrollingEnabled = false
+        recyclerView?.overScrollMode = View.OVER_SCROLL_NEVER // Optional
+
         initData()
     }
 
@@ -69,5 +76,18 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
     }
 
     override fun fetchData() {
+    }
+
+    fun ViewPager2.getRecyclerView(): RecyclerView? {
+        try {
+            val field = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+            field.isAccessible = true
+            return field.get(this) as RecyclerView
+        } catch (e: NoSuchFieldException) {
+            e.printStackTrace()
+        } catch (e: IllegalAccessException) {
+            e.printStackTrace()
+        }
+        return null
     }
 }

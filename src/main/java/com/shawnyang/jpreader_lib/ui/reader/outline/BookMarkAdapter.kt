@@ -30,7 +30,6 @@ class BookMarkAdapter(val publication: Publication,
         holder.setText(R.id.bookmark_chapter, getBookSpineItem(item.resourceHref)
                 ?:  "*Title Missing*")
 
-
         item.location.progression?.let { progression ->
             val formattedProgression = "${(progression * 100).roundToInt()}% through resource"
             holder.setText(R.id.bookmark_progression, formattedProgression)
@@ -51,9 +50,6 @@ class BookMarkAdapter(val publication: Publication,
                 false
             }
         }
-        holder.setText(R.id.bookmark_chapter, item.resourceTitle)
-        holder.setText(R.id.bookmark_chapter, item.resourceTitle)
-        holder.setText(R.id.bookmark_chapter, item.resourceTitle)
     }
 
     private fun getBookSpineItem(href: String): String? {
