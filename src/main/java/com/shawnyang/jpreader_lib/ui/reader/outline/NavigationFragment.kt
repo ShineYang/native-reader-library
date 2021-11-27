@@ -49,15 +49,16 @@ class NavigationFragment : Fragment(R.layout.layout_sheet_content_listview) {
             // Append children, and their children... recursive.
             flatLinks.addAll(children)
         }
-        setUpRV(flatLinks.toMutableList())
-        rvAdapter?.setOnItemClickListener { _, _, position ->
-            onLinkSelected(flatLinks[position].second)
-        }
+        setUpRV(flatLinks.toMutableList(), flatLinks)
+
     }
 
-    private fun setUpRV(items: MutableList<Any>){
+    private fun setUpRV(items: MutableList<Any>, link: MutableList<Pair<Int, Link>>){
         if(rvAdapter == null){
             rvAdapter = BookNavigationAdapter(R.layout.item_recycle_navigation)
+            rvAdapter?.setOnItemClickListener { _, _, position ->
+                onLinkSelected(link[position].second)
+            }
             rv_book_navi.layoutManager = LinearLayoutManager(activity)
             rv_book_navi.adapter = rvAdapter
         }
