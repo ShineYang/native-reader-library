@@ -10,10 +10,8 @@
 
 package com.shawnyang.jpreader_lib.ui.reader
 
-import android.graphics.PointF
 import android.os.Bundle
 import android.os.Handler
-import android.view.*
 import android.view.accessibility.AccessibilityManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -50,9 +48,6 @@ class EpubActivity : R2EpubActivity() {
     //Accessibility
     private var isExploreByTouchEnabled = false
     private var pageEnded = false
-
-    // Highlights
-    private var mode: ActionMode? = null
 
     private lateinit var binding: ActivityReaderBinding
 
@@ -126,13 +121,6 @@ class EpubActivity : R2EpubActivity() {
             readerFragment.updateSystemUiVisibility()
         // Seems to be required to adjust padding when transitioning from the outlines to the screen reader
         activity_container.requestApplyInsets()
-    }
-
-    private fun updateSystemUiPadding(container: View, insets: WindowInsets) {
-        if (readerFragment.isHidden)
-            container.padSystemUi(insets, this)
-        else
-            container.clearPadding()
     }
 
     private fun updateActivityTitle() {
