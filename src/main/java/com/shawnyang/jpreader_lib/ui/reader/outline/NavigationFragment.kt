@@ -1,25 +1,18 @@
 package com.shawnyang.jpreader_lib.ui.reader.outline
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.shawnyang.jpreader_lib.R
 import com.shawnyang.jpreader_lib.data.db.BookData
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
-import kotlinx.android.synthetic.main.item_recycle_navigation.view.*
 import kotlinx.android.synthetic.main.layout_sheet_content_listview.*
 import org.readium.r2.shared.publication.Link
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.toLocator
-import outlineTitle
 
 /**
  * @author ShineYang
@@ -31,6 +24,7 @@ class NavigationFragment : Fragment(R.layout.layout_sheet_content_listview) {
     private lateinit var publication: Publication
     private lateinit var persistence: BookData
     private lateinit var links: List<Link>
+    private var rvAdapter: BookNavigationAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +49,19 @@ class NavigationFragment : Fragment(R.layout.layout_sheet_content_listview) {
             // Append children, and their children... recursive.
             flatLinks.addAll(children)
         }
+        setUpRV(flatLinks.toMutableList())
+        rvAdapter?.setOnItemClickListener { _, _, position ->
+            onLinkSelected(flatLinks[position].second)
+        }
+    }
 
-        list_view.adapter = NavigationAdapter(requireActivity(), flatLinks.toMutableList())
-        list_view.setOnItemClickListener { _, _, position, _ -> onLinkSelected(flatLinks[position].second) }
+    private fun setUpRV(items: MutableList<Any>){
+        if(rvAdapter == null){
+            rvAdapter = BookNavigationAdapter(R.layout.item_recycle_navigation)
+            rv_book_navi.layoutManager = LinearLayoutManager(activity)
+            rv_book_navi.adapter = rvAdapter
+        }
+        rvAdapter?.data = items
     }
 
     private fun onLinkSelected(link: Link) {
@@ -85,88 +89,6 @@ class NavigationFragment : Fragment(R.layout.layout_sheet_content_listview) {
                     putParcelableArrayList(LINKS_ARG, if (links is ArrayList<Link>) links else ArrayList(links))
                 }
             }
-    }
-}
-
-private class NavigationAdapter(
-    private val activity: Activity,
-    private var items: MutableList<Any>
-) : BaseAdapter() {
-
-    private class ViewHolder(row: View) {
-        val navigationTextView: TextView = row.navigation_textView
-    }
-
-    /**
-     * Get the data item associated with the specified position in the data set.
-     *
-     * @param position Position of the item whose data we want within the adapter's
-     * data set.
-     * @return The data at the specified position.
-     */
-    override fun getItem(position: Int): Any {
-        return items[position]
-    }
-
-    /**
-     * Get the row id associated with the specified position in the list.
-     *
-     * @param position The position of the item within the adapter's data set whose row id we want.
-     * @return The id of the item at the specified position.
-     */
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    /**
-     * How many items are in the data set represented by this Adapter.
-     *
-     * @return Count of items.
-     */
-    override fun getCount(): Int {
-        return items.size
-    }
-
-    /**
-     * Get a View that displays the data at the specified position in the data set. You can either
-     * create a View manually or inflate it from an XML layout file. When the View is inflated, the
-     * parent View (GridView, ListView...) will apply default layout parameters unless you use
-     * [android.view.LayoutInflater.inflate]
-     * to specify a root view and to prevent attachment to the root.
-     *
-     * @param position The position of the item within the adapter's data set of the item whose view
-     * we want.
-     * @param convertView The old view to reuse, if possible. Note: You should check that this view
-     * is non-null and of an appropriate type before using. If it is not possible to convert
-     * this view to display the correct data, this method can create a new view.
-     * Heterogeneous lists can specify their number of view types, so that this View is
-     * always of the right type (see [.getViewTypeCount] and
-     * [.getItemViewType]).
-     * @param parent The parent that this view will eventually be attached to
-     * @return A View corresponding to the data at the specified position.
-     */
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view: View =
-            if (convertView == null) {
-                val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                inflater.inflate(R.layout.item_recycle_navigation, null).also {
-                    it.tag = ViewHolder(it)
-                }
-            } else {
-                convertView
-            }
-
-        val viewHolder = view.tag as ViewHolder
-
-        val item = getItem(position)
-        if (item is Pair<*, *>) {
-            item as Pair<Int, Link>
-            viewHolder.navigationTextView.text = item.second.outlineTitle
-        } else {
-            item as Link
-            viewHolder.navigationTextView.text = item.outlineTitle
-        }
-        return view
     }
 }
 

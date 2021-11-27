@@ -122,6 +122,7 @@ dependencies {
     implementation "nl.komponents.kovenant:kovenant-core:$KOVENANT_VERSION"
     implementation "nl.komponents.kovenant:kovenant-functional:$KOVENANT_VERSION"
     implementation "nl.komponents.kovenant:kovenant-jvm:$KOVENANT_VERSION"
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.7'
     api "org.jetbrains.anko:anko-sdk25:0.10.8"
     api "org.jetbrains.anko:anko-sqlite:0.10.8"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
