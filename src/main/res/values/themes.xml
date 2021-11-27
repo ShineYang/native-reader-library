@@ -2,7 +2,9 @@
     <!-- Base application theme. -->
     <style name="Theme.ReadiumAndroid" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-
+        <item name="md_color_title">@color/reader_theme_color</item>
+        <item name="md_color_content">@color/grey</item>
+        <item name="md_color_button_text">@color/reader_theme_color</item>
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
