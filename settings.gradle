@@ -10,6 +10,6 @@ gitRepositories {
         // optional, set what branch to use
         branch = 'develop'
         // you can also use a tag
-        tag = '2.1.2'
+        tag = '2.1.3'
     }
 }
