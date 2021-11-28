@@ -22,7 +22,7 @@ import org.readium.r2.shared.publication.Publication
 class BookmarksFragment : Fragment(R.layout.layout_bookmark_list) {
     lateinit var publication: Publication
     lateinit var persistence: BookData
-    private var rvAdapter: BookMarkAdapter? = null
+    private lateinit var rvAdapter: BookMarkAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,33 +35,30 @@ class BookmarksFragment : Fragment(R.layout.layout_bookmark_list) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val comparator: Comparator<Bookmark> = compareBy( {it.resourceIndex },{ it.location.progression })
+        val comparator: Comparator<Bookmark> = compareBy({ it.resourceIndex }, { it.location.progression })
         val bookmarks = persistence.getBookmarks(comparator).toMutableList()
         setUpRV(publication, bookmarks)
     }
 
-    private fun setUpRV(publication: Publication, items: MutableList<Bookmark>){
-        if(rvAdapter == null){
-            rvAdapter = BookMarkAdapter(publication, R.layout.item_recycle_bookmark)
-            rvAdapter?.setOnBookmarkDeleteRequested(object: BookMarkAdapter.OnBookmarkDeleteRequested{
-                override fun onBookmarkDeleteRequested(id: Long) {
-                    persistence.removeBookmark(id)
-                }
-            })
-            rvAdapter?.setOnItemClickListener { _, _, position ->
-                onBookmarkSelected(items[position])
+    private fun setUpRV(publication: Publication, items: MutableList<Bookmark>) {
+        rvAdapter = BookMarkAdapter(publication, R.layout.item_recycle_bookmark)
+        rvAdapter.setOnBookmarkDeleteRequested(object : BookMarkAdapter.OnBookmarkDeleteRequested {
+            override fun onBookmarkDeleteRequested(id: Long) {
+                persistence.removeBookmark(id)
             }
-            rv_book_mark.layoutManager = LinearLayoutManager(activity)
-            rv_book_mark.adapter = rvAdapter
+        })
+        rvAdapter.setOnItemClickListener { _, _, position ->
+            onBookmarkSelected(items[position])
         }
-        rvAdapter?.data = items
+        rv_book_mark.layoutManager = LinearLayoutManager(activity)
+        rv_book_mark.adapter = rvAdapter
+        rvAdapter.data = items
     }
 
     private fun onBookmarkSelected(bookmark: Bookmark) {
         setFragmentResult(
-            OutlineContract.REQUEST_KEY,
-            OutlineContract.createResult(bookmark.locator)
+                OutlineContract.REQUEST_KEY,
+                OutlineContract.createResult(bookmark.locator)
         )
     }
 }

@@ -47,6 +47,7 @@ class BookMarkAdapter(val publication: Publication,
                     listener?.onBookmarkDeleteRequested(item.id!!)
                     data.remove(item)
                 }
+                notifyItemRemoved(getItemPosition(item))
                 false
             }
         }
