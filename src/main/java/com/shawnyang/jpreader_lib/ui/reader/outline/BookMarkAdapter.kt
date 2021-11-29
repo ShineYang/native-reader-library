@@ -27,7 +27,7 @@ class BookMarkAdapter(val publication: Publication,
     }
 
     override fun convert(holder: BaseViewHolder, item: Bookmark) {
-        holder.setText(R.id.bookmark_chapter, getBookSpineItem(item.resourceTitle)
+        holder.setText(R.id.bookmark_chapter, getBookSpineItem(item.resourceHref)
                 ?:  "*未知标题*")
 
         item.location.progression?.let { progression ->
