@@ -46,6 +46,7 @@ class BookMarkAdapter(val publication: Publication,
                 if (itm.itemId == R.id.delete) {
                     listener?.onBookmarkDeleteRequested(item.id!!)
                     data.remove(item)
+                    notifyItemRemoved(holder.bindingAdapterPosition)
                 }
                 notifyItemRemoved(getItemPosition(item))
                 false

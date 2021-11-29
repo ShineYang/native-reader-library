@@ -7,7 +7,7 @@ rootProject.name = "androidreaderlibrary"
 gitRepositories {
     include('kotlin-toolkit') {
         uri = 'https://github.com/ShineYang/kotlin-toolkit.git'
-        // optional, set what branch to use
+        // optional, set what branc h to use
         branch = 'develop'
         // you can also use a tag
         tag = '2.1.3'
