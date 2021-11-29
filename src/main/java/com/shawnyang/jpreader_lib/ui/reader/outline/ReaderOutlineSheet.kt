@@ -52,6 +52,23 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
         val recyclerView = outline_pager.getRecyclerView()
         recyclerView?.isNestedScrollingEnabled = false
         recyclerView?.overScrollMode = View.OVER_SCROLL_NEVER // Optional
+        outline_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                // Because the fragment might or might not be created yet,
+                // we need to check for the size of the fragmentManager
+                // before accessing it.
+                if (childFragmentManager.fragments.size > position) {
+                    val fragment = childFragmentManager.fragments.get(position)
+                    fragment.view?.let {
+                        // Now we've got access to the fragment Root View
+                        // we will use it to calculate the height and
+                        // apply it to the ViewPager2
+                        updatePagerHeightForChild(it, outline_pager)
+                    }
+                }
+            }
+        })
 
         initData()
     }
@@ -89,5 +106,23 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
             e.printStackTrace()
         }
         return null
+    }
+
+    fun updatePagerHeightForChild(view: View, pager: ViewPager2) {
+        view.post {
+            val wMeasureSpec =
+                    View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
+            val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            view.measure(wMeasureSpec, hMeasureSpec)
+
+            if (pager.layoutParams.height != view.measuredHeight) {
+                pager.layoutParams = (pager.layoutParams)
+                        .also { lp ->
+                            // applying Fragment Root View Height to
+                            // the pager LayoutParams, so they match
+                            lp.height = view.measuredHeight
+                        }
+            }
+        }
     }
 }
