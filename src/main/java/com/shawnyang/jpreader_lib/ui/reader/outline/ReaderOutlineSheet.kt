@@ -32,7 +32,8 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
     private lateinit var publication: Publication
     private lateinit var persistence: BookData
 
-    override fun setUp() {
+    override
+    fun setUp() {
         ViewModelProvider(requireActivity()).get(ReaderViewModel::class.java).let {
             publication = it.publication
             persistence = it.persistence
@@ -110,19 +111,14 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
 
     fun updatePagerHeightForChild(view: View, pager: ViewPager2) {
         view.post {
-            val wMeasureSpec =
-                    View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-            val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            view.measure(wMeasureSpec, hMeasureSpec)
-
-            if (pager.layoutParams.height != view.measuredHeight) {
-                pager.layoutParams = (pager.layoutParams)
-                        .also { lp ->
-                            // applying Fragment Root View Height to
-                            // the pager LayoutParams, so they match
-                            lp.height = view.measuredHeight
-                        }
-            }
+            val height: Int = requireActivity().resources.displayMetrics.heightPixels
+            val maxHeight = (height * 0.90).toInt()
+            pager.layoutParams = (pager.layoutParams)
+                    .also { lp ->
+                        // applying Fragment Root View Height to
+                        // the pager LayoutParams, so they match
+                        lp.height = maxHeight
+                    }
         }
     }
 }
