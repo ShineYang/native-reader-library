@@ -1,5 +1,6 @@
 package com.shawnyang.jpreader_lib.ui.reader.outline
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -43,8 +44,10 @@ class BookmarksFragment : Fragment(R.layout.layout_bookmark_list) {
     private fun setUpRV(publication: Publication, items: MutableList<Bookmark>) {
         rvAdapter = BookMarkAdapter(publication, R.layout.item_recycle_bookmark)
         rvAdapter.setOnBookmarkDeleteRequested(object : BookMarkAdapter.OnBookmarkDeleteRequested {
+            @SuppressLint("NotifyDataSetChanged")
             override fun onBookmarkDeleteRequested(id: Long) {
                 persistence.removeBookmark(id)
+                rvAdapter.notifyDataSetChanged()
             }
         })
         rvAdapter.setOnItemClickListener { _, _, position ->
