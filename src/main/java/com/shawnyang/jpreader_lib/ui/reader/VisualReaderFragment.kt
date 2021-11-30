@@ -6,21 +6,21 @@
 
 package com.shawnyang.jpreader_lib.ui.reader
 
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import androidx.fragment.app.Fragment
+import com.shawnyang.jpreader_lib.exts.*
 import com.shawnyang.jpreader_lib.ui.base.BaseReaderFragment
-import com.shawnyang.jpreader_lib.exts.clearPadding
-import com.shawnyang.jpreader_lib.exts.hideSystemUi
-import com.shawnyang.jpreader_lib.exts.padSystemUi
-import com.shawnyang.jpreader_lib.exts.showSystemUi
 import kotlinx.android.synthetic.main.fragment_reader.*
+import org.readium.r2.navigator.VisualNavigator
+import org.readium.r2.navigator.util.EdgeTapNavigation
 
 /*
  * Adds fullscreen support to the BaseReaderFragment
  */
-abstract class VisualReaderFragment : BaseReaderFragment() {
+abstract class VisualReaderFragment : BaseReaderFragment(), VisualNavigator.Listener {
 
     private lateinit var navigatorFragment: Fragment
 
@@ -53,5 +53,17 @@ abstract class VisualReaderFragment : BaseReaderFragment() {
         } else {
             container.clearPadding()
         }
+    }
+
+    override fun onTap(point: PointF): Boolean {
+        val navigated = edgeTapNavigation.onTap(point, requireView())
+        if (!navigated) {
+            requireActivity().toggleSystemUi()
+        }
+        return true
+    }
+
+    private val edgeTapNavigation by lazy {
+        EdgeTapNavigation(navigator = navigator as VisualNavigator)
     }
 }

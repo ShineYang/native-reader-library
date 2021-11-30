@@ -136,11 +136,6 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
         outState.putBoolean(IS_SEARCH_VIEW_ICONIFIED, isSearchViewIconified)
     }
 
-    override fun onTap(point: PointF): Boolean {
-        requireActivity().toggleSystemUi()
-        return true
-    }
-
     companion object {
 
         private const val BASE_URL_ARG = "baseUrl"
