@@ -15,7 +15,6 @@ import com.shawnyang.jpreader_lib.exts.*
 import com.shawnyang.jpreader_lib.ui.base.BaseReaderFragment
 import kotlinx.android.synthetic.main.fragment_reader.*
 import org.readium.r2.navigator.VisualNavigator
-import org.readium.r2.navigator.util.EdgeTapNavigation
 
 /*
  * Adds fullscreen support to the BaseReaderFragment
@@ -56,14 +55,7 @@ abstract class VisualReaderFragment : BaseReaderFragment(), VisualNavigator.List
     }
 
     override fun onTap(point: PointF): Boolean {
-        val navigated = edgeTapNavigation.onTap(point, requireView())
-        if (!navigated) {
-            requireActivity().toggleSystemUi()
-        }
+        requireActivity().toggleSystemUi()
         return true
-    }
-
-    private val edgeTapNavigation by lazy {
-        EdgeTapNavigation(navigator = navigator as VisualNavigator)
     }
 }
