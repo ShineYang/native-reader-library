@@ -12,8 +12,10 @@ package com.shawnyang.jpreader_lib.ui.reader
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.accessibility.AccessibilityManager
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.FragmentResultListener
@@ -36,6 +38,7 @@ import org.readium.r2.navigator.pager.R2PagerAdapter
 import org.readium.r2.shared.publication.Locator
 import org.readium.r2.shared.ReadiumCSSName
 import org.readium.r2.shared.SCROLL_REF
+import java.lang.Exception
 
 
 class EpubActivity : R2EpubActivity() {
@@ -142,6 +145,16 @@ class EpubActivity : R2EpubActivity() {
 
     private fun loadParagraphTextInjection(webView: WebView?){
         webView?.webViewClient = object : WebViewClient(){
+            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                if (!request!!.isForMainFrame && request.url.path!!.endsWith("/favicon.ico")) {
+                    try {
+                        return WebResourceResponse("image/png", null, null)
+                    } catch (e: Exception) {
+                        Log.e("LoadFavicon", "shouldInterceptRequest failed", e)
+                    }
+                }
+                return null
+            }
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val paragraph = request?.url?.getQueryParameters("paragraphText")
                 return if (paragraph != null && paragraph.size > 0){
