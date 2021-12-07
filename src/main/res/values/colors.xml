@@ -9,5 +9,6 @@
     <color name="grey">#292929</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_80">#CBFFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
     <color name="reader_theme_color">#28AA4B</color>
 </resources>
