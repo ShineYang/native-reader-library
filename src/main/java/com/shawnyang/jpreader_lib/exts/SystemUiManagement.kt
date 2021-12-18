@@ -14,6 +14,8 @@ import android.view.WindowInsets
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.gyf.immersionbar.ktx.immersionBar
+import com.shawnyang.jpreader_lib.R
 import org.jetbrains.anko.indeterminateProgressDialog
 
 /** Returns `true` if fullscreen or immersive mode is not set. */
@@ -48,6 +50,10 @@ fun Activity.toggleSystemUi() {
         this.hideSystemUi()
     } else {
         this.showSystemUi()
+        immersionBar {
+            barColor(R.color.white)
+            autoDarkModeEnable(true)
+        }
     }
 }
 
