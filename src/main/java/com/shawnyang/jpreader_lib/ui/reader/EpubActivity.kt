@@ -21,6 +21,7 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.ViewModelProvider
+import com.gyf.immersionbar.ktx.immersionBar
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderContract
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
 import com.shawnyang.jpreader_lib.R
@@ -65,6 +66,11 @@ class EpubActivity : R2EpubActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        immersionBar {
+            statusBarColor(R.color.white)
+            navigationBarColor(R.color.white)
+            autoDarkModeEnable(true)
+        }
         ViewModelProvider(this).get(ReaderViewModel::class.java).let { model ->
             persistence = model.persistence
         }
