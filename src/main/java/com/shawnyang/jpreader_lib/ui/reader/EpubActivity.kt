@@ -66,11 +66,6 @@ class EpubActivity : R2EpubActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        immersionBar {
-            statusBarColor(R.color.white)
-            navigationBarColor(R.color.white)
-            autoDarkModeEnable(true)
-        }
         ViewModelProvider(this).get(ReaderViewModel::class.java).let { model ->
             persistence = model.persistence
         }
