@@ -85,6 +85,9 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
             .setSelectTextSize(15f)
             .bind()
         outline_tab_layout.buildIndicator<LinearIndicator>()
+            .setWidth(44.toPx())
+            .setColor(resources.getColor(R.color.reader_theme_color))
+            .setHeight(2.toPx())
             .bind()
         TabLayoutMediator(outline_tab_layout, outline_pager) { tab, idx -> tab.text = outlines[idx].label }.attach()
         tv_book_title.text = publication.metadata.title
