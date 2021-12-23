@@ -40,8 +40,8 @@
             app:tabPaddingEnd="0dp"
             app:tabPaddingStart="0dp"
             app:tabRippleColor="@android:color/transparent"
-            app:tabSelectedTextColor="@color/black"
-            app:tabTextColor="@color/black" />
+            app:tabSelectedTextColor="@color/reader_theme_color"
+            app:tabTextColor="@color/grey" />
 
     </RelativeLayout>
 
