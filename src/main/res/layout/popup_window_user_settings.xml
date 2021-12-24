@@ -63,7 +63,7 @@
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:tint="@color/sheet_text_color"
-                        android:backgroundTint="@android:color/white"
+                        android:backgroundTint="@color/sheet_bg_color"
                         android:contentDescription="@string/usersettings_description_font_increase"
                         android:scaleType="fitCenter"
                         app:srcCompat="@drawable/icon_font_increase" />
