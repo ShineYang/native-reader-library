@@ -46,7 +46,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:backgroundTint="@android:color/white"
+                        android:backgroundTint="@color/sheet_bg_color"
                         android:contentDescription="@string/usersettings_description_font_decrease"
                         android:scaleType="fitCenter"
                         android:tint="@color/sheet_text_color"
