@@ -10,13 +10,14 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginHorizontal="16dp"
-        android:text="dd"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+        android:text=""
+        android:textColor="@color/sheet_text_color"
+        android:textSize="14sp"/>
 
     <View
-        android:background="#E1E1E1"
         android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:layout_height="1dp"/>
+        android:background="@color/sheet_divider_color" />
 
 </RelativeLayout>
