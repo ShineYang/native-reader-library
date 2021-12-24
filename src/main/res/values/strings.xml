@@ -166,4 +166,9 @@
 
     <string name="tab_book_mark">书签</string>
     <string name="tab_navigation">导航</string>
+
+    <string name="bookmark_add_success">添加成功</string>
+    <string name="bookmark_already_add">书签已存在</string>
+    <string name="end_of_the_chapter">已经是章节最后了</string>
+
 </resources>

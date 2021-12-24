@@ -109,7 +109,7 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
         return when (item.itemId) {
             R.id.menu_bookmark -> {
                 val added = model.persistence.addBookmark(navigator.currentLocator.value)
-                toast(if (added) "已添加书签" else "书签已存在")
+                toast(if (added) getString(R.string.bookmark_add_success) else getString(R.string.bookmark_already_add))
                 true
             }
 

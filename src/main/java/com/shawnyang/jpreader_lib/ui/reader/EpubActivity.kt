@@ -215,7 +215,7 @@ class EpubActivity : R2EpubActivity() {
     override fun onPageEnded(end: Boolean) {
         if (isExploreByTouchEnabled) {
             if (!pageEnded == end && end) {
-                toast("已到最后")
+                toast(getString(R.string.end_of_the_chapter))
             }
             pageEnded = end
         }
