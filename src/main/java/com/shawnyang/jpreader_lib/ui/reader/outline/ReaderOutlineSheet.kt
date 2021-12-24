@@ -1,7 +1,6 @@
 package com.shawnyang.jpreader_lib.ui.reader.outline
 
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +10,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.loper7.tab_expand.ext.buildIndicator
 import com.loper7.tab_expand.ext.buildText
 import com.loper7.tab_expand.ext.toPx
-import com.loper7.tab_expand.indicator.BaseIndicator
 import com.loper7.tab_expand.indicator.LinearIndicator
 import com.loper7.tab_expand.text.BaseText
 import com.shawnyang.jpreader_lib.R
@@ -75,7 +73,7 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
     }
 
     private fun initData() {
-        val outlines: List<Outline> = listOf(Outline.Contents, Outline.Bookmarks)
+        val outlines: List<String> = listOf(getString(R.string.tab_navigation), getString(R.string.tab_book_mark))
 
         outline_pager.adapter = OutlineFragmentStateAdapter(this, publication, outlines)
         outline_tab_layout.buildText<BaseText>()
@@ -89,7 +87,7 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
             .setColor(resources.getColor(R.color.reader_theme_color))
             .setHeight(2.toPx())
             .bind()
-        TabLayoutMediator(outline_tab_layout, outline_pager) { tab, idx -> tab.text = outlines[idx].label }.attach()
+        TabLayoutMediator(outline_tab_layout, outline_pager) { tab, idx -> tab.text = outlines[idx] }.attach()
         tv_book_title.text = publication.metadata.title
     }
 

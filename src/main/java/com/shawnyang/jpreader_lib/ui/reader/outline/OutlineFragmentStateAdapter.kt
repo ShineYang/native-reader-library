@@ -2,6 +2,7 @@ package com.shawnyang.jpreader_lib.ui.reader.outline
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.shawnyang.jpreader_lib.R
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.epub.landmarks
 import org.readium.r2.shared.publication.epub.pageList
@@ -12,7 +13,7 @@ import org.readium.r2.shared.publication.opds.images
  * @date 2021/9/6
  * description:
  */
-class OutlineFragmentStateAdapter(fragment: Fragment, val publication: Publication, private val outlines: List<Outline>)
+class OutlineFragmentStateAdapter(val fragment: Fragment, val publication: Publication, private val outlines: List<String>)
     : FragmentStateAdapter(fragment) {
 
     override fun getItemCount(): Int {
@@ -21,8 +22,9 @@ class OutlineFragmentStateAdapter(fragment: Fragment, val publication: Publicati
 
     override fun createFragment(position: Int): Fragment {
         return when (this.outlines[position]) {
-            Outline.Contents -> createContentsFragment()//目录
-            Outline.Bookmarks -> BookmarksFragment()//书签
+            fragment.getString(R.string.tab_navigation) -> createContentsFragment()//目录
+            fragment.getString(R.string.tab_book_mark) -> BookmarksFragment()//书签
+            else -> createContentsFragment()
         }
     }
 
@@ -39,9 +41,4 @@ class OutlineFragmentStateAdapter(fragment: Fragment, val publication: Publicati
 
     private fun createLandmarksFragment() =
         NavigationFragment.newInstance(publication.landmarks)
-}
-
-enum class Outline(val label: String) {
-    Contents("目录"),
-    Bookmarks("书签"),
 }

@@ -2,6 +2,7 @@ package com.shawnyang.jpreader_lib.ui.reader.outline
 
 import android.widget.ImageView
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.shawnyang.jpreader_lib.R
@@ -28,7 +29,7 @@ class BookMarkAdapter(val publication: Publication,
 
     override fun convert(holder: BaseViewHolder, item: Bookmark) {
         holder.setText(R.id.bookmark_chapter, getBookSpineItem(item.resourceHref)
-                ?:  "*未知标题*")
+                ?:  "*${context.resources.getString(R.string.unknown_title)}*")
 
         item.location.progression?.let { progression ->
             val formattedProgression = "${(progression * 100).roundToInt()}%"

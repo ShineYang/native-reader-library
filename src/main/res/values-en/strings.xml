@@ -143,7 +143,7 @@
     <string name="timestamp">Timestamp</string>
 
     <string-array name="font_list">
-        <item>内嵌字体</item>
+        <item>embed font</item>
         <item>PT Serif</item>
         <item>Roboto</item>
         <item>Source Sans Pro</item>
@@ -161,9 +161,10 @@
     <string name="landmarks_tab_label">Landmarks</string>
     <string name="action_mode_menu_highlight">Highlight</string>
     <string name="action_mode_menu_note">Note</string>
-    <string name="unknown_title">未知标题</string>
+    <string name="unknown_title">unknown_title</string>
 
 
-    <string name="tab_book_mark">书签</string>
-    <string name="tab_navigation">导航</string>
+    <string name="tab_book_mark">Bookmarks</string>
+    <string name="tab_navigation">Navigation</string>
+
 </resources>
