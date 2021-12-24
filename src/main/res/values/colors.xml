@@ -15,5 +15,5 @@
     <color name="sheet_bg_color">#ffffff</color>
     <color name="sheet_text_color">#000000</color>
     <color name="sheet_inactive_color">#464646</color>
-
+    <color name="sheet_divider_color">#B3B3B3</color>
 </resources>
