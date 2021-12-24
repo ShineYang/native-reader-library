@@ -11,9 +11,8 @@
     <color name="white_80">#CBFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="reader_theme_color">#28AA4B</color>
-    <color name="status_bar_bg">#ffffff</color>
-    <color name="sheet_bg_color">#ffffff</color>
-    <color name="sheet_text_color">#000000</color>
-    <color name="sheet_inactive_color">#464646</color>
-
+    <color name="status_bar_bg">#000000</color>
+    <color name="sheet_bg_color">#272727</color>
+    <color name="sheet_text_color">#FFFFFF</color>
+    <color name="sheet_inactive_color">#959595</color>
 </resources>

@@ -11,6 +11,7 @@ import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.WindowInsets
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -49,9 +50,10 @@ fun Activity.toggleSystemUi() {
     if (this.isSystemUiVisible()) {
         this.hideSystemUi()
     } else {
+        //mmersionBar.showStatusBar(this.window)
         this.showSystemUi()
         immersionBar {
-            barColor(R.color.white)
+            barColor(R.color.status_bar_bg)
             autoDarkModeEnable(true)
         }
     }
@@ -71,6 +73,7 @@ fun View.clearPadding() =
     setPadding(0, 0, 0, 0)
 
 inline val Fragment.windowHeight: Int
+    @RequiresApi(Build.VERSION_CODES.M)
     get() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val metrics = requireActivity().windowManager.currentWindowMetrics

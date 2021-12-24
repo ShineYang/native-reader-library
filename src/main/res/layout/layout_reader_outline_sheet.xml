@@ -18,7 +18,7 @@
             android:text=""
             android:maxLines="1"
             android:ellipsize="end"
-            android:textColor="@color/black"
+            android:textColor="@color/sheet_text_color"
             android:textSize="18sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -40,7 +40,7 @@
             app:tabPaddingStart="0dp"
             app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="@color/reader_theme_color"
-            app:tabTextColor="@color/grey" />
+            app:tabTextColor="@color/sheet_inactive_color" />
 
     </RelativeLayout>
 
