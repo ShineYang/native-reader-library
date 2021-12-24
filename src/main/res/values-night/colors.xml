@@ -16,4 +16,6 @@
     <color name="sheet_text_color">#FFFFFF</color>
     <color name="sheet_inactive_color">#959595</color>
     <color name="sheet_divider_color">#818181</color>
+    <color name="sheet_grey_bg_color">#707070</color>
+    <color name="sheet_checked_color">#2C2C2C</color>
 </resources>

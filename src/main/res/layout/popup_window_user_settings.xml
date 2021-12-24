@@ -16,7 +16,7 @@
     android:layout_height="match_parent"
     android:gravity="end"
     android:orientation="horizontal"
-    android:background="@color/white"
+    android:background="@color/sheet_bg_color"
     android:padding="10dp">
 
     <LinearLayout
@@ -41,7 +41,7 @@
                     android:layout_marginBottom="20dp"
                     android:orientation="horizontal">
 
-                    <ImageButton
+                    <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/font_decrease"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
@@ -49,18 +49,20 @@
                         android:backgroundTint="@android:color/white"
                         android:contentDescription="@string/usersettings_description_font_decrease"
                         android:scaleType="fitCenter"
+                        android:tint="@color/sheet_text_color"
                         app:srcCompat="@drawable/icon_font_decrease" />
 
                     <View
                         android:layout_width="1px"
                         android:layout_height="match_parent"
-                        android:background="#888888" />
+                        android:background="@color/sheet_divider_color" />
 
-                    <ImageButton
+                    <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/font_increase"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
                         android:layout_weight="1"
+                        android:tint="@color/sheet_text_color"
                         android:backgroundTint="@android:color/white"
                         android:contentDescription="@string/usersettings_description_font_increase"
                         android:scaleType="fitCenter"
@@ -82,7 +84,7 @@
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
                         android:gravity="center_horizontal"
-                        android:textColor="@color/black"
+                        android:textColor="@color/sheet_text_color"
                         android:text="@string/usersettings_label_font"
                         android:textSize="16sp"/>
 
@@ -92,45 +94,6 @@
                         android:layout_height="48dp"
                         android:spinnerMode="dialog"/>
                 </LinearLayout>
-
-<!--                <RelativeLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:id="@+id/rl_font_family"-->
-<!--                    android:layout_gravity="center_vertical"-->
-<!--                    android:layout_marginBottom="20dp">-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/tv_font_setting_title"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_centerVertical="true"-->
-<!--                        android:layout_marginEnd="20dp"-->
-<!--                        android:gravity="center_horizontal"-->
-<!--                        android:text="@string/usersettings_label_font"-->
-<!--                        android:textColor="@color/black"-->
-<!--                        android:textSize="16sp" />-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/tv_current_font_family"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_centerVertical="true"-->
-<!--                        android:layout_toStartOf="@+id/iv_font_select_more"-->
-<!--                        android:layout_toEndOf="@+id/tv_font_setting_title"-->
-<!--                        android:ellipsize="end"-->
-<!--                        android:maxLines="1"-->
-<!--                        android:text="当前字体"-->
-<!--                        android:textSize="14sp" />-->
-
-<!--                    <ImageView-->
-<!--                        android:id="@+id/iv_font_select_more"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="12dp"-->
-<!--                        android:layout_alignParentEnd="true"-->
-<!--                        android:layout_centerVertical="true"-->
-<!--                        android:src="@drawable/ic_right" />-->
-<!--                </RelativeLayout>-->
 
                 <RadioGroup
                     android:id="@+id/appearance"
