@@ -149,7 +149,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.shawnyang.jpreader_lib'
                 artifactId = 'jpreader_lib'
-                version = '1.0.0'
+                version = '1.7.7'
             }
         }
     }
