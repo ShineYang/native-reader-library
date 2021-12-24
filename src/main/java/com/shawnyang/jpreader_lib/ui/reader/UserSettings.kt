@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.loper7.tab_expand.ext.toPx
 import org.json.JSONArray
@@ -206,8 +207,8 @@ class UserSettings(var preferences: SharedPreferences, val context: Context, pri
 
                 } else {
                     // for other views
-                    v!!.setBackgroundColor(Color.WHITE)
-                    v.findViewById<TextView>(android.R.id.text1).setTextColor(Color.BLACK)
+                    v!!.setBackgroundColor(ContextCompat.getColor(context, R.color.sheet_bg_color))
+                    v.findViewById<TextView>(android.R.id.text1).setTextColor(ContextCompat.getColor(context, R.color.sheet_text_color))
 
                 }
                 return v

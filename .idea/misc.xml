@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../.gradle/caches/transforms-3/005b82f46c06bc2b980aa113ef1c3c94/transformed/jetified-readium-navigator-2.1.8/res/layout/item_spinner_font.xml" value="0.5515625" />
+        <entry key="../../Library/Android/sdk/platforms/android-30/data/res/layout/simple_spinner_dropdown_item.xml" value="0.5515625" />
         <entry key="src/main/res/drawable/bg_bottom_sheet_dialog_fragment.xml" value="0.203125" />
         <entry key="src/main/res/drawable/bg_reader_tab.xml" value="0.558974358974359" />
         <entry key="src/main/res/drawable/rbtn_selector.xml" value="0.5564814814814815" />
