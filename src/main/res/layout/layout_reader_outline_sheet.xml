@@ -31,13 +31,12 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/outline_tab_layout"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="44dp"
             android:background="#00000000"
             app:tabGravity="fill"
-            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorFullWidth="false"
+            app:tabIndicatorColor="@color/reader_theme_color"
             app:tabMode="fixed"
-            app:tabPaddingEnd="0dp"
-            app:tabPaddingStart="0dp"
             app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="@color/reader_theme_color"
             app:tabTextColor="@color/sheet_inactive_color" />
