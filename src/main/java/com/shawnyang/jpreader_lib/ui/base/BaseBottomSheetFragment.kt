@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.gyf.immersionbar.ImmersionBar
 import com.shawnyang.jpreader_lib.exts.windowHeight
 import com.shawnyang.jpreader_lib.ui.widget.FixedHeightBottomSheetDialog
 
@@ -42,10 +43,16 @@ abstract class BaseBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initImmersionBar()
         if (isFirstVisible) {
             setUp()
         }
     }
+
+    protected open fun initImmersionBar() {
+        ImmersionBar.with(this).init()
+    }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return FixedHeightBottomSheetDialog(requireContext(), theme, windowHeight)

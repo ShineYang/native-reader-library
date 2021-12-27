@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import com.gyf.immersionbar.ktx.immersionBar
 import com.loper7.tab_expand.ext.buildIndicator
 import com.loper7.tab_expand.ext.buildText
 import com.loper7.tab_expand.ext.toPx
@@ -70,6 +71,14 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
         })
 
         initData()
+    }
+
+    override fun initImmersionBar() {
+        super.initImmersionBar()
+        immersionBar {
+            barColor(R.color.status_bar_bg)
+            autoDarkModeEnable(true)
+        }
     }
 
     private fun initData() {
