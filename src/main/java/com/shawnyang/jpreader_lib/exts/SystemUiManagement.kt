@@ -8,6 +8,7 @@ package com.shawnyang.jpreader_lib.exts
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.view.View
 import android.view.WindowInsets
@@ -36,27 +37,38 @@ fun Activity.hideSystemUi() {
             )
 }
 
-/** Disable fullscreen or immersive mode. */
-fun Activity.showSystemUi() {
-    this.window.decorView.systemUiVisibility = (
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            )
+// Using ViewCompat and WindowInsetsCompat does not work properly in all versions of Android
+@RequiresApi(Build.VERSION_CODES.M)
+@Suppress("DEPRECATION")
+        /** Disable fullscreen or immersive mode. */
+fun Activity.showSystemUi(needLight: Boolean = false) {
+    if(needLight)
+        this.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE//防止系统栏隐藏时内容区域大小发生变化
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+    else this.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE//防止系统栏隐藏时内容区域大小发生变化
+            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 }
 
 /** Toggle fullscreen or immersive mode. */
+@RequiresApi(Build.VERSION_CODES.M)
 fun Activity.toggleSystemUi() {
     if (this.isSystemUiVisible()) {
         this.hideSystemUi()
     } else {
-        //mmersionBar.showStatusBar(this.window)
-        this.showSystemUi()
         immersionBar {
-            barColor(R.color.status_bar_bg)
-            autoDarkModeEnable(true)
+            statusBarColor(R.color.status_bar_bg)
+            navigationBarColor(R.color.status_bar_bg)
         }
+        this.showSystemUi(needLight = !isDarkTheme(this))
     }
+}
+
+fun isDarkTheme(activity: Activity): Boolean {
+    return activity.resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 }
 
 /** Set padding around view so that content doesn't overlap system UI */
