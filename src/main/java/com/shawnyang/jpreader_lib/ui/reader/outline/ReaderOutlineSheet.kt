@@ -1,11 +1,13 @@
 package com.shawnyang.jpreader_lib.ui.reader.outline
 
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.gyf.immersionbar.ktx.immersionBar
 import com.loper7.tab_expand.ext.buildIndicator
@@ -14,10 +16,8 @@ import com.loper7.tab_expand.ext.toPx
 import com.loper7.tab_expand.indicator.LinearIndicator
 import com.loper7.tab_expand.text.BaseText
 import com.shawnyang.jpreader_lib.R
-import com.shawnyang.jpreader_lib.data.db.BookData
 import com.shawnyang.jpreader_lib.ui.base.BaseBottomSheetFragment
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
-import kotlinx.android.synthetic.main.layout_reader_outline_sheet.*
 import org.readium.r2.shared.publication.Publication
 
 /**
@@ -26,17 +26,19 @@ import org.readium.r2.shared.publication.Publication
  * description: Fragment to show navigation links (Table of Contents, Page lists & Landmarks)
  */
 class ReaderOutlineSheet : BaseBottomSheetFragment() {
-    override fun setLayoutId() = R.layout.layout_reader_outline_sheet
+    override fun setLayoutId() = R.layout.fragment_reader_outline_sheet
+
+    private lateinit var outline_pager: ViewPager2
 
     private lateinit var publication: Publication
-    private lateinit var persistence: BookData
 
     override
     fun setUp() {
         ViewModelProvider(requireActivity()).get(ReaderViewModel::class.java).let {
             publication = it.publication
-            persistence = it.persistence
         }
+
+        outline_pager = root.findViewById<ViewPager2>(R.id.outline_pager)
 
         childFragmentManager.setFragmentResultListener(
             OutlineContract.REQUEST_KEY,
@@ -49,7 +51,7 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
             }
         )
 
-        val recyclerView = outline_pager.getRecyclerView()
+        val recyclerView = outline_pager?.getRecyclerView()
         recyclerView?.isNestedScrollingEnabled = false
         recyclerView?.overScrollMode = View.OVER_SCROLL_NEVER // Optional
         outline_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -59,7 +61,7 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
                 // we need to check for the size of the fragmentManager
                 // before accessing it.
                 if (childFragmentManager.fragments.size > position) {
-                    val fragment = childFragmentManager.fragments.get(position)
+                    val fragment = childFragmentManager.fragments[position]
                     fragment.view?.let {
                         // Now we've got access to the fragment Root View
                         // we will use it to calculate the height and
@@ -83,6 +85,7 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
 
     private fun initData() {
         val outlines: List<String> = listOf(getString(R.string.tab_navigation), getString(R.string.tab_book_mark))
+        val outline_tab_layout = root.findViewById<TabLayout>(R.id.outline_tab_layout)
 
         outline_pager.adapter = OutlineFragmentStateAdapter(this, publication, outlines)
         outline_tab_layout.buildText<BaseText>()
@@ -96,7 +99,7 @@ class ReaderOutlineSheet : BaseBottomSheetFragment() {
             .setHeight(2.toPx())
             .bind()
         TabLayoutMediator(outline_tab_layout, outline_pager) { tab, idx -> tab.text = outlines[idx] }.attach()
-        tv_book_title.text = publication.metadata.title
+        root.findViewById<TextView>(R.id.tv_book_title).text = publication.metadata.title
     }
 
     override fun fetchData() {

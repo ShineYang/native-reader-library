@@ -13,7 +13,6 @@ import android.view.WindowInsets
 import androidx.fragment.app.Fragment
 import com.shawnyang.jpreader_lib.exts.*
 import com.shawnyang.jpreader_lib.ui.base.BaseReaderFragment
-import kotlinx.android.synthetic.main.fragment_reader.*
 import org.readium.r2.navigator.VisualNavigator
 
 /*
@@ -30,11 +29,6 @@ abstract class VisualReaderFragment : BaseReaderFragment(), VisualNavigator.List
         childFragmentManager.addOnBackStackChangedListener {
             updateSystemUiVisibility()
         }
-
-        fragment_reader_container.setOnApplyWindowInsetsListener { container, insets ->
-            updateSystemUiPadding(container, insets)
-            insets
-        }
     }
 
     fun updateSystemUiVisibility() {
@@ -46,7 +40,7 @@ abstract class VisualReaderFragment : BaseReaderFragment(), VisualNavigator.List
         requireView().requestApplyInsets()
     }
 
-    private fun updateSystemUiPadding(container: View, insets: WindowInsets) {
+    fun updateSystemUiPadding(container: View, insets: WindowInsets) {
         if (navigatorFragment.isHidden) {
             container.padSystemUi(insets, requireActivity())
         } else {

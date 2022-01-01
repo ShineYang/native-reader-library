@@ -6,10 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.shawnyang.jpreader_lib.R
-import com.shawnyang.jpreader_lib.data.db.BookData
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
-import kotlinx.android.synthetic.main.layout_sheet_content_listview.*
 import org.readium.r2.shared.publication.Link
 import org.readium.r2.shared.publication.Publication
 import org.readium.r2.shared.publication.toLocator
@@ -20,18 +19,15 @@ import org.readium.r2.shared.publication.toLocator
  * description:
  */
 class NavigationFragment : Fragment(R.layout.layout_sheet_content_listview) {
-
+    private lateinit var root: View
     private lateinit var publication: Publication
-    private lateinit var persistence: BookData
     private lateinit var links: List<Link>
     private var rvAdapter: BookNavigationAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         ViewModelProvider(requireActivity()).get(ReaderViewModel::class.java).let {
             publication = it.publication
-            persistence = it.persistence
         }
 
         links = requireNotNull(requireArguments().getParcelableArrayList(LINKS_ARG))
@@ -39,7 +35,7 @@ class NavigationFragment : Fragment(R.layout.layout_sheet_content_listview) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        root = view
         val flatLinks = mutableListOf<Pair<Int, Link>>()
 
         for (link in links) {
@@ -59,6 +55,7 @@ class NavigationFragment : Fragment(R.layout.layout_sheet_content_listview) {
             rvAdapter?.setOnItemClickListener { _, _, position ->
                 onLinkSelected(link[position].second)
             }
+            val rv_book_navi = root.findViewById<RecyclerView>(R.id.rv_book_navi)
             rv_book_navi.layoutManager = LinearLayoutManager(activity)
             rv_book_navi.adapter = rvAdapter
         }

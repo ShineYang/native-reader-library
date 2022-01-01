@@ -18,7 +18,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.gyf.immersionbar.ktx.immersionBar
 import com.shawnyang.jpreader_lib.R
-import org.jetbrains.anko.indeterminateProgressDialog
 
 /** Returns `true` if fullscreen or immersive mode is not set. */
 private fun Activity.isSystemUiVisible(): Boolean {
@@ -104,12 +103,3 @@ val Fragment.actionBarHeight: Int
             this.requireActivity().actionBar!!.height;
         } else 0
     }
-
-
-fun Context.blockingProgressDialog(message: String) =
-    indeterminateProgressDialog(message)
-        .apply {
-            setCancelable(false)
-            setCanceledOnTouchOutside(false)
-        }
-

@@ -6,7 +6,7 @@
 
 // See https://proandroiddev.com/android-singleliveevent-redux-with-kotlin-flow-b755c70bb055
 
-package com.shawnyang.jpreader_lib.data
+package com.shawnyang.jpreader_lib.exts
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver

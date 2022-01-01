@@ -17,6 +17,7 @@ import com.shawnyang.jpreader_lib.ui.widget.FixedHeightBottomSheetDialog
  */
 abstract class BaseBottomSheetFragment : BottomSheetDialogFragment() {
     private var isFirstVisible: Boolean = true
+    protected lateinit var root: View
 
     /**
      * @return 布局 layout id
@@ -38,7 +39,8 @@ abstract class BaseBottomSheetFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return setLayout(inflater, container)
+        root = setLayout(inflater, container)
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

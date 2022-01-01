@@ -7,6 +7,7 @@
 package com.shawnyang.jpreader_lib.ui.base
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.shawnyang.jpreader_lib.R
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
@@ -27,10 +28,18 @@ abstract class BaseReaderFragment : Fragment(R.layout.fragment_reader) {
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
+        model.fragmentChannel.receive(this) { event ->
+            val message =
+                    when (event) {
+                        is ReaderViewModel.FeedbackEvent.BookmarkFailed -> R.string.bookmark_already_add
+                        is ReaderViewModel.FeedbackEvent.BookmarkSuccessfullyAdded -> R.string.bookmark_add_success
+                    }
+            Toast.makeText(requireContext(), getString(message), Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onStop() {
-        model.persistence.savedLocation = navigator.currentLocator.value
+        model.saveProgression(navigator.currentLocator.value)
         super.onStop()
     }
 

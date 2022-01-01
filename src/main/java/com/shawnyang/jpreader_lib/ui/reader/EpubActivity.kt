@@ -21,16 +21,13 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.ViewModelProvider
-import com.gyf.immersionbar.ktx.immersionBar
+import com.mcxiaoke.koi.ext.toast
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderContract
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
 import com.shawnyang.jpreader_lib.R
-import com.shawnyang.jpreader_lib.data.db.BookData
 import com.shawnyang.jpreader_lib.databinding.ActivityReaderBinding
 import com.shawnyang.jpreader_lib.exts.*
 import com.shawnyang.jpreader_lib.ui.reader.outline.OutlineContract
-import kotlinx.android.synthetic.main.activity_reader.*
-import org.jetbrains.anko.toast
 import org.greenrobot.eventbus.EventBus
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.navigator.epub.R2EpubActivity
@@ -46,8 +43,6 @@ class EpubActivity : R2EpubActivity() {
 
     private lateinit var modelFactory: ReaderViewModel.Factory
     private lateinit var readerFragment: EpubReaderFragment
-
-    private lateinit var persistence: BookData
 
     //Accessibility
     private var isExploreByTouchEnabled = false
@@ -66,9 +61,6 @@ class EpubActivity : R2EpubActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityReaderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewModelProvider(this).get(ReaderViewModel::class.java).let { model ->
-            persistence = model.persistence
-        }
 
         /* FIXME: When the OutlineFragment is left by pressing the back button,
         * the Webview is not updated, so removed highlights will still be visible.
@@ -104,7 +96,7 @@ class EpubActivity : R2EpubActivity() {
         // although we need a call every time the reader is hidden
         window.decorView.setOnApplyWindowInsetsListener { view, insets ->
             val newInsets = view.onApplyWindowInsets(insets)
-            activity_container.dispatchApplyWindowInsets(newInsets)
+            binding.activityContainer.dispatchApplyWindowInsets(newInsets)
         }
 
         supportFragmentManager.addOnBackStackChangedListener {
@@ -124,7 +116,7 @@ class EpubActivity : R2EpubActivity() {
         else
             readerFragment.updateSystemUiVisibility()
         // Seems to be required to adjust padding when transitioning from the outlines to the screen reader
-        activity_container.requestApplyInsets()
+        binding.activityContainer.requestApplyInsets()
     }
 
     private fun updateActivityTitle() {

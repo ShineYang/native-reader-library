@@ -7,7 +7,6 @@
 package com.shawnyang.jpreader_lib.ui.reader
 
 import android.graphics.Color
-import android.graphics.PointF
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.commitNow
@@ -17,8 +16,6 @@ import com.mcxiaoke.koi.ext.toast
 import com.shawnyang.jpreader_lib.ui.reader.react.ReaderViewModel
 import com.shawnyang.jpreader_lib.ui.reader.outline.ReaderOutlineSheet
 import com.shawnyang.jpreader_lib.R
-import com.shawnyang.jpreader_lib.data.db.BookData
-import com.shawnyang.jpreader_lib.exts.toggleSystemUi
 import org.readium.r2.navigator.Navigator
 import org.readium.r2.navigator.epub.EpubNavigatorFragment
 import org.readium.r2.shared.APPEARANCE_REF
@@ -30,7 +27,6 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
     override lateinit var model: ReaderViewModel
     override lateinit var navigator: Navigator
     private lateinit var publication: Publication
-    private lateinit var persistence: BookData
     lateinit var navigatorFragment: EpubNavigatorFragment
 
     private var isSearchViewIconified = true
@@ -46,7 +42,6 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
         ViewModelProvider(requireActivity()).get(ReaderViewModel::class.java).let {
             model = it
             publication = it.publication
-            persistence = it.persistence
         }
 
         val baseUrl = checkNotNull(requireArguments().getString(BASE_URL_ARG))
@@ -55,7 +50,7 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
                 EpubNavigatorFragment.createFactory(
                         publication,
                         baseUrl,
-                        persistence.savedLocation,
+                        model.initialLocation,
                         this
                 )
         setHasOptionsMenu(true)
@@ -88,6 +83,11 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        view.setOnApplyWindowInsetsListener { container, insets ->
+            updateSystemUiPadding(container, insets)
+            insets
+        }
+
         // This is a hack to draw the right background color on top and bottom blank spaces
         navigatorFragment.lifecycleScope.launchWhenStarted {
             val appearancePref = activity.preferences.getInt(APPEARANCE_REF, 0)
@@ -108,8 +108,7 @@ class EpubReaderFragment : VisualReaderFragment(), EpubNavigatorFragment.Listene
 
         return when (item.itemId) {
             R.id.menu_bookmark -> {
-                val added = model.persistence.addBookmark(navigator.currentLocator.value)
-                toast(if (added) getString(R.string.bookmark_add_success) else getString(R.string.bookmark_already_add))
+                model.insertBookmark(navigator.currentLocator.value)
                 true
             }
 

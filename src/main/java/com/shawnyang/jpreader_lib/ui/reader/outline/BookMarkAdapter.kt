@@ -2,12 +2,10 @@ package com.shawnyang.jpreader_lib.ui.reader.outline
 
 import android.widget.ImageView
 import android.widget.PopupMenu
-import androidx.core.content.ContextCompat
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.shawnyang.jpreader_lib.R
-import com.shawnyang.jpreader_lib.data.Bookmark
-import kotlinx.coroutines.NonDisposableHandle.parent
+import com.shawnyang.jpreader_lib.data.room.model.Bookmark
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.readium.r2.shared.publication.Publication
@@ -31,12 +29,12 @@ class BookMarkAdapter(val publication: Publication,
         holder.setText(R.id.bookmark_chapter, getBookSpineItem(item.resourceHref)
                 ?:  "*${context.resources.getString(R.string.unknown_title)}*")
 
-        item.location.progression?.let { progression ->
+        item.locator.locations.progression?.let { progression ->
             val formattedProgression = "${(progression * 100).roundToInt()}%"
             holder.setText(R.id.bookmark_progression, formattedProgression)
         }
 
-        val formattedDate = DateTime(item.creationDate).toString(DateTimeFormat.shortDateTime())
+        val formattedDate = DateTime(item.creation).toString(DateTimeFormat.shortDateTime())
         holder.setText(R.id.bookmark_timestamp, formattedDate)
         val overflow = holder.getViewOrNull<ImageView>(R.id.overflow)
         overflow?.setOnClickListener {
