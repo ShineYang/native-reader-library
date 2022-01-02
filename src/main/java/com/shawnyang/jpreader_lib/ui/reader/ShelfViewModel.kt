@@ -3,6 +3,7 @@ package com.shawnyang.jpreader_lib.ui.reader
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.lifecycle.*
 import com.shawnyang.jpreader_lib.data.repo.BookRepository
 import com.shawnyang.jpreader_lib.data.room.BookDatabase
@@ -54,13 +55,15 @@ class ShelfViewModel : ViewModel() {
             publication: Publication
     ): Long {
         val coverBitmap: Bitmap? = publication.cover()
-
         val coverToDB: ByteArray = if(coverBitmap != null){
             val resizedCoverHeight = 400
-            val originRatio: Float = 1.0f * coverBitmap.width / 1.0f * coverBitmap.height
-            val resizedCover = coverBitmap.let { Bitmap.createScaledBitmap(it, (originRatio * resizedCoverHeight).toInt(), resizedCoverHeight, true) }
+            val originRatio = coverBitmap.width.toFloat() / coverBitmap.height.toFloat()
+            val resizedCover = coverBitmap.let {
+                Bitmap.createScaledBitmap(it, (originRatio * resizedCoverHeight).toInt(), resizedCoverHeight, true)
+            }
+            coverBitmap.recycle()
             val outStream = ByteArrayOutputStream()
-            resizedCover.compress(Bitmap.CompressFormat.PNG, 80, outStream)
+            resizedCover.compress(Bitmap.CompressFormat.PNG, 90, outStream)
             outStream.toByteArray()
         }else byteArrayOf()
         return bookRepository.insertBook(href, mediaType, publication, coverToDB)
