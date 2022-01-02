@@ -54,9 +54,13 @@ class ShelfViewModel : ViewModel() {
             publication: Publication
     ): Long {
         val coverBitmap: Bitmap? = publication.cover()
+
         val coverToDB: ByteArray = if(coverBitmap != null){
+            val resizedCoverHeight = 400
+            val originRatio = coverBitmap.width / coverBitmap.height
+            val resizedCover = coverBitmap.let { Bitmap.createScaledBitmap(it, originRatio * resizedCoverHeight, resizedCoverHeight, true) }
             val outStream = ByteArrayOutputStream()
-            coverBitmap.compress(Bitmap.CompressFormat.PNG, 80, outStream)
+            resizedCover.compress(Bitmap.CompressFormat.PNG, 80, outStream)
             outStream.toByteArray()
         }else byteArrayOf()
         return bookRepository.insertBook(href, mediaType, publication, coverToDB)
