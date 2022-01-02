@@ -167,7 +167,14 @@
     <string name="tab_book_mark">Bookmarks</string>
     <string name="tab_navigation">Navigation</string>
 
-    <string name="bookmark_add_success">Success</string>
+
+    <string name="book_duplicated_confirm">Book Already Added, Confirm Add Duplicate?</string>
+    <string name="book_open_failed">Open Failed</string>
+
+    <string name="book_add_success">Added Success</string>
+    <string name="book_add_failed">Added Failed</string>
+
+    <string name="bookmark_add_success">Added Success</string>
     <string name="bookmark_already_add">Already Added</string>
     <string name="end_of_the_chapter">End Of The Chapter</string>
 

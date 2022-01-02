@@ -38,6 +38,10 @@ class ShelfViewModel : ViewModel() {
         return bookRepository.get(id)
     }
 
+    suspend fun isDuplicated(title: String): Boolean{
+        return bookRepository.getByTitle(title) != null
+    }
+
     suspend fun getBookList(){
         books.clear()
         books.addAll(bookRepository.getBookList())

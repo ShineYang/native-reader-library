@@ -40,6 +40,12 @@ interface BooksDao {
     suspend fun get(id: Long): Book?
 
     /**
+     * Retrieve a book from its title.
+     */
+    @Query("SELECT * FROM " + Book.TABLE_NAME + " WHERE " + Book.TITLE + " = :title")
+    suspend fun getByTitle(title: String): Book?
+
+    /**
      * Retrieve all books
      * @return List of books as LiveData
      */
