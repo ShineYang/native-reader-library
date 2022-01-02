@@ -57,8 +57,8 @@ class ShelfViewModel : ViewModel() {
 
         val coverToDB: ByteArray = if(coverBitmap != null){
             val resizedCoverHeight = 400
-            val originRatio = coverBitmap.width / coverBitmap.height
-            val resizedCover = coverBitmap.let { Bitmap.createScaledBitmap(it, originRatio * resizedCoverHeight, resizedCoverHeight, true) }
+            val originRatio: Float = 1.0f * coverBitmap.width / 1.0f * coverBitmap.height
+            val resizedCover = coverBitmap.let { Bitmap.createScaledBitmap(it, (originRatio * resizedCoverHeight).toInt(), resizedCoverHeight, true) }
             val outStream = ByteArrayOutputStream()
             resizedCover.compress(Bitmap.CompressFormat.PNG, 80, outStream)
             outStream.toByteArray()
