@@ -46,7 +46,9 @@ function parsePtoPlainText(p) {
   nodes.forEach(node => {
     if (node.nodeName == "ruby") {
       node.childNodes.forEach(n => {
-        if (n.nodeName == "#text") {
+        if (n.nodeName == "rt") {
+          // skip this tag
+        } else {
           plainText += n.textContent
         }
       })
