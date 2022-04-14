@@ -2,73 +2,82 @@
  * Request Host app to mark paragraph as read
  */
 function hostAppParseParagraph(paragraphText) {
-  var split = '?paragraphText=';
-  window.open(split + encodeURI(paragraphText), '_self');
+  var split = "?paragraphText=";
+  window.open(split + encodeURI(paragraphText), "_self");
 }
 
 function createButton(text) {
   var button = document.createElement("div");
-  button.className = "pd-button"
-  button.innerText = text
-  return button
+  button.className = "pd-button";
+  button.innerText = text;
+  return button;
 }
 
 function createControlsContainer() {
-  var div = document.createElement("div")
-  div.className = "pd-controls"
-  return div
+  var div = document.createElement("div");
+  div.className = "pd-controls";
+  return div;
 }
 
 function injectParagraph() {
-  var paragraphs = document.querySelectorAll("p")
+  var paragraphs = document.querySelectorAll("p");
 
-  paragraphs.forEach(p => {
-    var paragraphContent = p.textContent
+  paragraphs.forEach((p) => {
+    var paragraphContent = p.textContent;
 
-    var div = createControlsContainer()
+    var div = createControlsContainer();
 
     if (paragraphContent.length != 0) {
-      var analyzeButton = createButton("分析")
-      div.onclick = function() {
-        var textContent = parsePtoPlainText(p)
-        hostAppParseParagraph(textContent.substring(0, textContent.length - 2))
+      var analyzeButton = createButton("分析");
+      div.onclick = function () {
+        var textContent = parsePtoPlainText(p);
+        hostAppParseParagraph(textContent.substring(0, textContent.length - 2));
       };
-      div.append(analyzeButton)
-      p.append(div)
+      div.append(analyzeButton);
+      p.append(div);
     }
   });
+}
+
+function isRubyContains(nodes) {
+  return (
+    Array.from(nodes).find((element) => element.nodeName === "ruby") !=
+    undefined
+  );
 }
 
 function parsePtoPlainText(p) {
-  var plainText = ""
-  var nodes = p.childNodes
+  var plainText = "";
+  var nodes = p.childNodes;
 
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     if (node.nodeName == "ruby") {
-      node.childNodes.forEach(n => {
+      node.childNodes.forEach((n) => {
         if (n.nodeName == "rt") {
           // skip this tag
         } else {
-          plainText += n.textContent
+          plainText += n.textContent;
         }
-      })
+      });
+    } else if (node.childNodes.length > 0 && isRubyContains(node.childNodes)) {
+      plainText += parsePtoPlainText(node);
     } else {
-      plainText += node.textContent
+      plainText += node.textContent;
     }
   });
 
-  return plainText
+  return plainText;
 }
 
-function addStyle (styleText) {
-  const styleNode = document.createElement('style');
-  styleNode.type = 'text/css';
+function addStyle(styleText) {
+  const styleNode = document.createElement("style");
+  styleNode.type = "text/css";
   styleNode.textContent = styleText;
   document.documentElement.appendChild(styleNode);
   return styleNode;
 }
 
-window.onload= () => {
+window.onload = () => {
   var style = `
   div.pd-controls {
     display: inline-block !important;
@@ -107,7 +116,7 @@ window.onload= () => {
     -webkit-writing-mode: horizontal-tb !important;
     writing-mode: horizontal-tb !important;
   }
-  `
-  addStyle(style)
-  injectParagraph()
-}
+  `;
+  addStyle(style);
+  injectParagraph();
+};
