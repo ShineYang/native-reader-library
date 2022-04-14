@@ -39,17 +39,25 @@ function injectParagraph() {
   });
 }
 
+function isRubyContains(nodes) {
+  return Array.from(nodes).find(element => element.nodeName === "ruby") != undefined;
+}
+
 function parsePtoPlainText(p) {
   var plainText = ""
   var nodes = p.childNodes
-
+    
   nodes.forEach(node => {
     if (node.nodeName == "ruby") {
       node.childNodes.forEach(n => {
-        if (n.nodeName == "#text") {
+        if (n.nodeName == "rt") {
+          // skip this tag
+        } else {
           plainText += n.textContent
         }
       })
+    } else if (node.childNodes.length > 0 && isRubyContains(node.childNodes)) {
+        plainText += parsePtoPlainText(node)
     } else {
       plainText += node.textContent
     }
