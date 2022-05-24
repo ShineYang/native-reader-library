@@ -66,6 +66,7 @@ function parsePtoPlainText(p) {
     }
   });
 
+  plainText = plainText.replaceAll("\n", "");
   return plainText;
 }
 
