@@ -1,8 +1,3 @@
-if (typeof String.prototype.replaceAll === "undefined") {
-  String.prototype.replaceAll = function (match, replace) {
-    return this.replace(new RegExp(match, "g"), () => replace);
-  };
-}
 /**
  * Request Host app to mark paragraph as read
  */
@@ -84,6 +79,12 @@ function addStyle(styleText) {
 }
 
 window.onload = () => {
+  if (typeof String.prototype.replaceAll === "undefined") {
+    String.prototype.replaceAll = function (match, replace) {
+      return this.replace(new RegExp(match, "g"), () => replace);
+    };
+  }
+
   var style = `
   div.pd-controls {
     display: inline-block !important;
